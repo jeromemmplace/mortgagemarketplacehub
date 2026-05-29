@@ -1,0 +1,211 @@
+{
+  "name": "Mortgage Marketplace Hub",
+  "version": "1.0.0",
+  "website": "https://mortgagemarketplace.biz",
+  "customGpt": "https://chatgpt.com/g/g-6a011111a8c481918c68977fb7cabb54-my-mortgage-assistant",
+  "resources": [
+    {
+      "title": "FHA Loan Program",
+      "type": "Canva",
+      "category": "Flyers",
+      "description": "Low down payment overview flyer for first-time buyers.",
+      "meta": "Co-branded",
+      "url": "#"
+    },
+    {
+      "title": "VA Loan Program",
+      "type": "Canva",
+      "category": "Flyers",
+      "description": "Zero down payment flyer for eligible veterans and active service members.",
+      "meta": "Co-branded",
+      "url": "#"
+    },
+    {
+      "title": "USDA Loan Program",
+      "type": "Canva",
+      "category": "Flyers",
+      "description": "Zero down rural homebuying flyer with eligibility area reminder.",
+      "meta": "Co-branded",
+      "url": "#"
+    },
+    {
+      "title": "Down Payment Assistance",
+      "type": "Canva",
+      "category": "Flyers",
+      "description": "DPA overview for buyers who need help with funds to close.",
+      "meta": "Co-branded",
+      "url": "#"
+    },
+    {
+      "title": "Loan Application 1003",
+      "type": "PDF",
+      "category": "Forms",
+      "description": "Uniform Residential Loan Application reference.",
+      "meta": "FNMA",
+      "url": "#"
+    },
+    {
+      "title": "Loan Estimate",
+      "type": "PDF",
+      "category": "Forms",
+      "description": "Loan terms, projected payments, and closing cost disclosure.",
+      "meta": "CFPB",
+      "url": "#"
+    },
+    {
+      "title": "Closing Disclosure",
+      "type": "PDF",
+      "category": "Forms",
+      "description": "Final costs and terms before closing.",
+      "meta": "CFPB",
+      "url": "#"
+    },
+    {
+      "title": "My Mortgage Assistant GPT",
+      "type": "Link",
+      "category": "AI Assistant",
+      "description": "Dedicated ChatGPT assistant for borrower questions, realtor scripts, loan explanations, and scenario support.",
+      "meta": "Custom GPT",
+      "url": "https://chatgpt.com/g/g-6a011111a8c481918c68977fb7cabb54-my-mortgage-assistant"
+    }
+  ],
+  "projects": [
+    {
+      "id": "p1",
+      "name": "FB Ad Lead Funnel Pages",
+      "owner": "Mike",
+      "status": "In Progress",
+      "priority": "Urgent",
+      "description": "Create two lead funnel pages: First Time Home Buyers and Housing Oregon's Heroes.",
+      "collaborators": ["Jerome", "Marketing Team"],
+      "viewers": ["Stacy", "Summer"],
+      "assets": [],
+      "comments": []
+    },
+    {
+      "id": "p2",
+      "name": "Funnel Thank You Pages",
+      "owner": "Mike",
+      "status": "Not Started",
+      "priority": "High",
+      "description": "Build thank you pages with a video placeholder, embedded calendar, and Mortgage Marketplace branding.",
+      "collaborators": ["Jerome"],
+      "viewers": ["Marketing Team"],
+      "assets": [],
+      "comments": []
+    },
+    {
+      "id": "p3",
+      "name": "Calendar Page Templates",
+      "owner": "Mike",
+      "status": "Planning",
+      "priority": "High",
+      "description": "Create 2-3 reusable calendar page templates for loan officers.",
+      "collaborators": ["Jerome", "Stacy"],
+      "viewers": ["Summer"],
+      "assets": [],
+      "comments": []
+    },
+    {
+      "id": "p4",
+      "name": "Open House Sign-In Pages",
+      "owner": "Mike",
+      "status": "Planning",
+      "priority": "High",
+      "description": "Create 2-3 branded open house sign-in templates with matching property feedback pages and workflows.",
+      "collaborators": ["Jerome", "Marketing Team"],
+      "viewers": ["Stacy", "Summer"],
+      "assets": [],
+      "comments": []
+    },
+    {
+      "id": "p5",
+      "name": "E-Business Card Landing Pages",
+      "owner": "Mike",
+      "status": "Not Started",
+      "priority": "Medium",
+      "description": "Create 2-3 landing page templates for loan officers and realtors.",
+      "collaborators": ["Jerome"],
+      "viewers": ["Marketing Team"],
+      "assets": [],
+      "comments": []
+    },
+    {
+      "id": "p6",
+      "name": "Mortgage Marketplace Hub Logins",
+      "owner": "Jerome",
+      "status": "In Progress",
+      "priority": "High",
+      "description": "Create hub logins for Stacy and Summer and confirm access.",
+      "collaborators": ["Mike"],
+      "viewers": ["Stacy", "Summer"],
+      "assets": [],
+      "comments": []
+    },
+    {
+      "id": "p7",
+      "name": "AI Voice Agent: Realtor Listings",
+      "owner": "Mike",
+      "status": "Backlog",
+      "priority": "Medium",
+      "description": "Scope a voice agent that can support realtor listing conversations and lead routing.",
+      "collaborators": ["Jerome"],
+      "viewers": ["Marketing Team"],
+      "assets": [],
+      "comments": []
+    },
+    {
+      "id": "p8",
+      "name": "AI Voice Agent: Mortgage Recruits",
+      "owner": "Mike",
+      "status": "Backlog",
+      "priority": "Medium",
+      "description": "Scope a voice agent for mortgage recruiting workflows and candidate follow-up.",
+      "collaborators": ["Jerome"],
+      "viewers": ["Marketing Team"],
+      "assets": [],
+      "comments": []
+    },
+    {
+      "id": "p9",
+      "name": "Realtor Resource Pages with QR Code",
+      "owner": "Mike",
+      "status": "Backlog",
+      "priority": "Medium",
+      "description": "Create realtor-facing resource pages with QR code access for classes, flyers, and partner tools.",
+      "collaborators": ["Jerome", "Marketing Team"],
+      "viewers": ["Stacy", "Summer"],
+      "assets": [],
+      "comments": []
+    }
+  ],
+  "checklists": {
+    "buyer": [
+      "Collect photo ID and Social Security Number",
+      "Pull tri-merge credit report",
+      "Collect last 2 years W2s and tax returns",
+      "Collect last 30 days pay stubs",
+      "Collect last 2 months bank statements",
+      "Complete 1003 loan application",
+      "Issue pre-approval letter",
+      "Send welcome email and set GHL pipeline stage"
+    ],
+    "processing": [
+      "Order appraisal",
+      "Order title search and title insurance",
+      "Verify employment",
+      "Submit file to underwriting",
+      "Clear all underwriting conditions",
+      "Issue clear to close",
+      "Send Closing Disclosure 3 business days before closing"
+    ],
+    "closing": [
+      "Confirm wire transfer amount with title",
+      "Borrower brings valid photo ID to closing",
+      "Sign all closing documents",
+      "Confirm funding and disbursement",
+      "Record deed with county",
+      "Send congratulations email and request review"
+    ]
+  }
+}
