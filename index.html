@@ -4,1804 +4,475 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Mortgage Marketplace Hub</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
+    * { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
-      --ink: #07111f;
-      --panel: #101b2f;
-      --panel-2: #17243a;
-      --line: rgba(255, 255, 255, 0.08);
-      --line-gold: rgba(213, 178, 88, 0.26);
-      --gold: #d5b258;
-      --gold-2: #f2d47e;
-      --teal: #4cc6b7;
-      --coral: #ee8068;
-      --blue: #78a6ff;
-      --paper: #f7f4eb;
-      --text: #eef2fb;
-      --muted: #98a3ba;
-      --muted-2: #c7cedd;
-      --good: #41d083;
-      --warn: #f4b85e;
-      --bad: #ff7b72;
-      --sidebar: 280px;
-      --topbar: 70px;
-      --radius: 8px;
-      --shadow: 0 24px 80px rgba(0, 0, 0, 0.36);
-      --font: "Figtree", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      --brand-bg: url("mortgage-marketplace-background.jpg");
+      --ink:#07111f; --panel:#101b2f; --panel2:#17243a; --gold:#d5b258; --gold2:#f2d47e;
+      --text:#eef2fb; --muted:#98a3ba; --line:rgba(255,255,255,.1); --lineGold:rgba(213,178,88,.3);
+      --good:#41d083; --warn:#f4b85e; --bad:#ff7b72; --blue:#78a6ff; --coral:#ee8068;
+      --radius:8px; --sidebar:280px; --topbar:70px; --font:"Figtree",system-ui,sans-serif;
+      --bg:url("mortgage-marketplace-background.jpg");
     }
-
-    html { scroll-behavior: smooth; }
-
     body {
-      min-height: 100vh;
-      overflow-x: hidden;
-      background:
-        linear-gradient(90deg, rgba(7, 17, 31, 0.94) 0%, rgba(7, 17, 31, 0.72) 48%, rgba(7, 17, 31, 0.88) 100%),
-        var(--brand-bg) center / cover fixed no-repeat,
-        radial-gradient(circle at 85% 0%, rgba(213, 178, 88, 0.14), transparent 28rem),
-        linear-gradient(135deg, #07111f 0%, #0d1727 48%, #101827 100%);
-      color: var(--text);
-      font-family: var(--font);
+      min-height:100vh; font-family:var(--font); color:var(--text);
+      background:linear-gradient(90deg,rgba(7,17,31,.95),rgba(7,17,31,.76)),var(--bg) center/cover fixed no-repeat,#07111f;
     }
-
-    button, input, select, textarea { font: inherit; }
-    button { border: 0; }
-    a { color: inherit; }
-
-    .skip-nav {
-      position: fixed;
-      top: -44px;
-      left: 16px;
-      z-index: 1000;
-      background: var(--gold);
-      color: var(--ink);
-      padding: 10px 14px;
-      border-radius: 0 0 var(--radius) var(--radius);
-      font-weight: 800;
-      transition: top 0.18s ease;
+    button,input,select,textarea { font:inherit; }
+    button { border:0; }
+    a { color:inherit; }
+    .auth-screen {
+      position:fixed; inset:0; z-index:2000; display:grid; place-items:center; padding:20px;
+      background:linear-gradient(90deg,rgba(7,17,31,.95),rgba(7,17,31,.76)),var(--bg) center/cover no-repeat;
     }
-
-    .skip-nav:focus { top: 0; }
-
-    .app-shell { display: flex; min-height: 100vh; }
-
+    .auth-screen.hidden { display:none; }
+    .auth-card {
+      width:min(100%,430px); padding:28px; border:1px solid var(--lineGold); border-radius:var(--radius);
+      background:rgba(9,18,33,.95); box-shadow:0 24px 80px rgba(0,0,0,.38);
+    }
+    .auth-card h1 { font-size:1.6rem; margin-bottom:8px; }
+    .auth-card p { color:var(--muted); line-height:1.5; margin-bottom:18px; }
+    .auth-message { min-height:22px; color:var(--bad); font-size:.86rem; margin-top:10px; }
     .sidebar {
-      position: fixed;
-      inset: 0 auto 0 0;
-      width: var(--sidebar);
-      z-index: 60;
-      background: rgba(9, 18, 33, 0.96);
-      border-right: 1px solid var(--line-gold);
-      display: flex;
-      flex-direction: column;
-      backdrop-filter: blur(18px);
+      position:fixed; inset:0 auto 0 0; width:var(--sidebar); z-index:60; background:rgba(9,18,33,.96);
+      border-right:1px solid var(--lineGold); display:flex; flex-direction:column;
     }
-
-    .brand {
-      padding: 24px 22px 18px;
-      border-bottom: 1px solid var(--line);
-    }
-
-    .brand-row { display: flex; align-items: center; gap: 12px; }
-
+    .brand { padding:24px 22px 18px; border-bottom:1px solid var(--line); }
+    .brand-row { display:flex; align-items:center; gap:12px; }
     .brand-mark {
-      width: 52px;
-      height: 52px;
-      border-radius: 10px;
-      background: linear-gradient(145deg, var(--gold-2), var(--gold));
-      color: var(--ink);
-      display: grid;
-      place-items: center;
-      box-shadow: 0 10px 26px rgba(213, 178, 88, 0.22);
-      position: relative;
-      overflow: hidden;
+      width:52px; height:52px; border-radius:10px; background:linear-gradient(145deg,var(--gold2),var(--gold));
+      display:grid; place-items:center; overflow:hidden; position:relative; color:var(--ink);
     }
-
-    .brand-logo-img {
-      position: absolute;
-      inset: 4px;
-      width: calc(100% - 8px);
-      height: calc(100% - 8px);
-      object-fit: contain;
-      z-index: 2;
-    }
-
-    .brand-mark svg { width: 25px; height: 25px; }
-    .brand-name { font-size: 0.92rem; font-weight: 800; line-height: 1.12; letter-spacing: 0; }
-    .brand-name span { color: var(--gold-2); }
-    .brand-subtitle { margin-top: 12px; color: var(--muted); font-size: 0.76rem; line-height: 1.45; }
-
-    .nav { flex: 1; overflow-y: auto; padding: 14px; }
-    .nav-label {
-      color: var(--muted);
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-      font-size: 0.66rem;
-      font-weight: 800;
-      padding: 14px 10px 8px;
-    }
-
+    .brand-logo-img { position:absolute; inset:4px; width:calc(100% - 8px); height:calc(100% - 8px); object-fit:contain; z-index:2; }
+    .brand-mark svg { width:25px; height:25px; }
+    .brand-name { font-weight:800; line-height:1.1; }
+    .brand-name span { color:var(--gold2); }
+    .brand-subtitle { margin-top:12px; color:var(--muted); font-size:.78rem; line-height:1.45; }
+    .nav { flex:1; overflow:auto; padding:14px; }
+    .nav-label { color:var(--muted); text-transform:uppercase; letter-spacing:.12em; font-size:.66rem; font-weight:800; padding:14px 10px 8px; }
     .nav-item {
-      width: 100%;
-      min-height: 42px;
-      display: flex;
-      align-items: center;
-      gap: 11px;
-      color: var(--muted-2);
-      background: transparent;
-      padding: 10px 11px;
-      border-radius: var(--radius);
-      cursor: pointer;
-      text-align: left;
-      transition: background 0.18s ease, color 0.18s ease;
+      width:100%; min-height:42px; display:flex; align-items:center; gap:11px; color:#c7cedd; background:transparent;
+      padding:10px 11px; border-radius:var(--radius); cursor:pointer; text-align:left;
     }
-
-    .nav-item:hover, .nav-item:focus-visible { background: rgba(255, 255, 255, 0.06); color: var(--text); outline: none; }
-    .nav-item.active { background: rgba(213, 178, 88, 0.15); color: var(--gold-2); }
-    .nav-item svg { width: 18px; height: 18px; flex: 0 0 auto; }
-    .nav-item .count { margin-left: auto; color: var(--ink); background: var(--gold); border-radius: 99px; padding: 2px 8px; font-size: 0.68rem; font-weight: 800; }
-
-    .sidebar-footer {
-      border-top: 1px solid var(--line);
-      padding: 16px 20px 20px;
-      display: grid;
-      gap: 10px;
-    }
-
-    .status-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      color: var(--muted-2);
-      font-size: 0.78rem;
-    }
-
-    .status-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--good); }
-    .site-link { color: var(--gold-2); text-decoration: none; font-size: 0.78rem; font-weight: 700; }
-
-    .overlay {
-      position: fixed;
-      inset: 0;
-      z-index: 50;
-      background: rgba(0, 0, 0, 0.62);
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.18s ease;
-    }
-
-    .overlay.visible { opacity: 1; pointer-events: auto; }
-
+    .nav-item:hover,.nav-item.active { background:rgba(213,178,88,.14); color:var(--gold2); }
+    .nav-item svg { width:18px; height:18px; }
+    .sidebar-footer { border-top:1px solid var(--line); padding:16px 20px 20px; color:var(--muted); font-size:.78rem; }
     .topbar {
-      position: fixed;
-      top: 0;
-      left: var(--sidebar);
-      right: 0;
-      height: var(--topbar);
-      z-index: 40;
-      background: rgba(7, 17, 31, 0.82);
-      border-bottom: 1px solid var(--line);
-      backdrop-filter: blur(18px);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 16px;
-      padding: 0 28px;
+      position:fixed; top:0; left:var(--sidebar); right:0; height:var(--topbar); z-index:40;
+      background:rgba(7,17,31,.86); border-bottom:1px solid var(--line); display:flex; align-items:center;
+      justify-content:space-between; gap:16px; padding:0 28px; backdrop-filter:blur(18px);
     }
-
-    .topbar-left { display: flex; align-items: center; gap: 14px; min-width: 0; }
-    .menu-btn, .icon-btn {
-      width: 40px;
-      height: 40px;
-      border-radius: var(--radius);
-      display: grid;
-      place-items: center;
-      color: var(--text);
-      background: rgba(255, 255, 255, 0.06);
-      cursor: pointer;
-    }
-
-    .menu-btn { display: none; }
-    .menu-btn svg, .icon-btn svg { width: 20px; height: 20px; }
-    .topbar-title { font-size: 1.02rem; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .topbar-kicker { color: var(--muted); font-size: 0.78rem; margin-top: 2px; }
-
-    .topbar-actions { display: flex; align-items: center; gap: 10px; }
-
-    .search-field {
-      position: relative;
-      min-width: min(34vw, 420px);
-    }
-
-    .search-field svg {
-      position: absolute;
-      left: 12px;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 17px;
-      height: 17px;
-      color: var(--muted);
-      pointer-events: none;
-    }
-
-    .search-field input {
-      width: 100%;
-      min-height: 40px;
-      border-radius: var(--radius);
-      border: 1px solid var(--line);
-      background: rgba(255, 255, 255, 0.06);
-      color: var(--text);
-      padding: 10px 12px 10px 38px;
-      outline: none;
-    }
-
-    .search-field input:focus { border-color: var(--line-gold); box-shadow: 0 0 0 3px rgba(213, 178, 88, 0.12); }
-    .avatar { width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; color: var(--ink); background: var(--gold); font-weight: 900; }
-
-    .main {
-      margin-left: var(--sidebar);
-      padding-top: var(--topbar);
-      width: calc(100% - var(--sidebar));
-      min-height: 100vh;
-    }
-
-    .page { display: none; padding: 28px; }
-    .page.active { display: block; }
-    .page:focus { outline: none; }
-
-    .page-head {
-      display: flex;
-      align-items: end;
-      justify-content: space-between;
-      gap: 18px;
-      margin-bottom: 20px;
-    }
-
-    h1 { font-size: clamp(1.55rem, 3vw, 2.15rem); line-height: 1.08; letter-spacing: 0; }
-    .lead { color: var(--muted); line-height: 1.58; max-width: 760px; margin-top: 8px; }
-
-    .button-row { display: flex; gap: 10px; flex-wrap: wrap; }
-
+    .topbar-left,.topbar-actions { display:flex; align-items:center; gap:12px; min-width:0; }
+    .menu-btn,.icon-btn { width:40px; height:40px; border-radius:var(--radius); display:grid; place-items:center; color:var(--text); background:rgba(255,255,255,.06); cursor:pointer; }
+    .menu-btn { display:none; }
+    .topbar-title { font-weight:800; }
+    .topbar-kicker { color:var(--muted); font-size:.78rem; margin-top:2px; }
+    .search-field { position:relative; min-width:min(34vw,420px); }
+    .search-field svg { position:absolute; left:12px; top:50%; transform:translateY(-50%); width:17px; color:var(--muted); }
+    .search-field input { width:100%; min-height:40px; border-radius:var(--radius); border:1px solid var(--line); background:rgba(255,255,255,.06); color:var(--text); padding:10px 12px 10px 38px; outline:0; }
+    .avatar { width:38px; height:38px; border-radius:50%; display:grid; place-items:center; color:var(--ink); background:var(--gold); font-weight:900; }
+    .main { margin-left:var(--sidebar); padding-top:var(--topbar); min-height:100vh; }
+    .page { display:none; padding:28px; }
+    .page.active { display:block; }
+    .page-head { display:flex; align-items:end; justify-content:space-between; gap:18px; margin-bottom:20px; }
+    h1 { font-size:clamp(1.55rem,3vw,2.15rem); line-height:1.08; }
+    .lead { color:var(--muted); line-height:1.58; max-width:780px; margin-top:8px; }
     .btn {
-      min-height: 40px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      border-radius: var(--radius);
-      padding: 10px 15px;
-      color: var(--ink);
-      background: var(--gold);
-      cursor: pointer;
-      font-weight: 800;
-      text-decoration: none;
-      transition: transform 0.18s ease, background 0.18s ease;
+      min-height:40px; display:inline-flex; align-items:center; justify-content:center; gap:8px; border-radius:var(--radius);
+      padding:10px 15px; color:var(--ink); background:var(--gold); cursor:pointer; font-weight:800; text-decoration:none;
     }
-
-    .btn:hover { background: var(--gold-2); transform: translateY(-1px); }
-    .btn:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
-    .btn.secondary { background: rgba(255, 255, 255, 0.06); color: var(--text); border: 1px solid var(--line); }
-    .btn.secondary:hover { background: rgba(255, 255, 255, 0.1); }
-    .btn svg { width: 17px; height: 17px; }
-    .btn.full { width: 100%; }
-
-    .hero {
-      display: grid;
-      grid-template-columns: minmax(0, 1.5fr) minmax(290px, 0.8fr);
-      gap: 18px;
-      align-items: stretch;
-      margin-bottom: 18px;
+    .btn.secondary { background:rgba(255,255,255,.06); color:var(--text); border:1px solid var(--line); }
+    .btn:disabled { opacity:.45; cursor:not-allowed; }
+    .btn.full { width:100%; }
+    .button-row { display:flex; gap:10px; flex-wrap:wrap; }
+    .hero { display:grid; grid-template-columns:minmax(0,1.5fr) minmax(290px,.8fr); gap:18px; margin-bottom:18px; }
+    .panel,.hero-main,.metric,.quick-card,.resource-card,.project-card {
+      background:rgba(16,27,47,.86); border:1px solid var(--line); border-radius:var(--radius); box-shadow:0 24px 80px rgba(0,0,0,.25);
     }
-
-    .hero-main, .panel, .card {
-      background: rgba(16, 27, 47, 0.86);
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
+    .hero-main { min-height:260px; padding:28px; display:grid; align-content:space-between; position:relative; overflow:hidden; }
+    .hero-main::before { content:""; position:absolute; inset:0; background:linear-gradient(115deg,rgba(7,17,31,.96),rgba(7,17,31,.72) 45%,rgba(7,17,31,.38)),var(--bg) center/cover no-repeat; }
+    .hero-main > * { position:relative; }
+    .eyebrow { color:var(--gold2); text-transform:uppercase; letter-spacing:.12em; font-size:.72rem; font-weight:900; margin-bottom:12px; }
+    .hero-actions { margin-top:22px; }
+    .market-card { padding:22px; display:grid; gap:14px; }
+    .market-row { display:flex; justify-content:space-between; gap:12px; padding:10px 0; border-top:1px solid var(--line); }
+    .market-row span { color:var(--muted); font-size:.8rem; }
+    .metric-grid,.grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:14px; margin-bottom:22px; }
+    .metric { padding:18px; }
+    .metric-top { display:flex; justify-content:space-between; color:var(--muted); font-size:.78rem; }
+    .metric strong { display:block; margin-top:10px; font-size:1.7rem; }
+    .metric small { display:block; margin-top:6px; color:var(--muted); }
+    .quick-card,.resource-card { min-height:156px; padding:18px; display:grid; gap:12px; cursor:pointer; text-align:left; color:var(--text); }
+    .quick-card:hover,.resource-card:hover { border-color:var(--lineGold); transform:translateY(-1px); }
+    .quick-card p,.resource-card p { color:var(--muted); line-height:1.48; font-size:.86rem; }
+    .quick-icon,.resource-icon { width:42px; height:42px; border-radius:var(--radius); display:grid; place-items:center; background:rgba(213,178,88,.14); color:var(--gold2); }
+    .quick-icon svg,.resource-icon svg { width:21px; height:21px; }
+    .filter-row,.tabs { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:16px; }
+    .filter-btn,.tab,.chip { border:1px solid var(--line); color:#c7cedd; background:rgba(255,255,255,.04); border-radius:99px; padding:8px 13px; cursor:pointer; font-weight:800; font-size:.8rem; }
+    .filter-btn.active,.tab.active,.filter-btn:hover,.tab:hover { background:var(--gold); color:var(--ink); border-color:var(--gold); }
+    .tag { border-radius:99px; padding:4px 9px; font-size:.68rem; font-weight:900; text-transform:uppercase; background:rgba(213,178,88,.15); color:var(--gold2); }
+    .resource-footer,.card-top,.project-line { display:flex; align-items:center; justify-content:space-between; gap:10px; }
+    .resource-footer { margin-top:auto; border-top:1px solid var(--line); padding-top:12px; color:var(--muted); font-size:.78rem; }
+    .open-text { color:var(--gold2); font-weight:800; }
+    .two-col,.project-board { display:grid; grid-template-columns:minmax(280px,.85fr) minmax(320px,1fr); gap:18px; align-items:start; }
+    .project-board { grid-template-columns:minmax(250px,.72fr) minmax(360px,1.28fr); }
+    .panel { padding:22px; }
+    .field { margin-bottom:13px; }
+    .field label { display:block; color:#c7cedd; font-size:.8rem; font-weight:800; margin-bottom:6px; }
+    .field input,.field select,.field textarea,textarea {
+      width:100%; min-height:42px; border-radius:var(--radius); border:1px solid var(--line); background:rgba(255,255,255,.06);
+      color:var(--text); padding:10px 12px; outline:0;
     }
-
-    .hero-main {
-      min-height: 260px;
-      padding: 28px;
-      display: grid;
-      align-content: space-between;
-      position: relative;
-      overflow: hidden;
+    .field textarea,textarea { min-height:92px; resize:vertical; }
+    .field input:disabled,.field select:disabled,textarea:disabled { opacity:.7; cursor:not-allowed; }
+    .field select option { background:var(--panel); }
+    .form-grid,.results { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; }
+    .result { background:rgba(255,255,255,.05); border:1px solid var(--line); border-radius:var(--radius); padding:14px; }
+    .result span { color:var(--muted); font-size:.75rem; display:block; margin-bottom:5px; }
+    .result.total { grid-column:1/-1; text-align:center; background:rgba(213,178,88,.14); border-color:var(--lineGold); }
+    .result.total strong { color:var(--gold2); font-size:2rem; }
+    .afford-note,.locked-note { color:var(--muted); line-height:1.5; font-size:.86rem; }
+    .project-toolbar { display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-bottom:14px; }
+    .project-list { display:grid; gap:10px; max-height:calc(100vh - var(--topbar) - 230px); overflow:auto; padding-right:4px; }
+    .project-item { width:100%; display:grid; gap:8px; padding:14px; border:1px solid var(--line); border-radius:var(--radius); background:rgba(255,255,255,.04); color:var(--text); cursor:pointer; text-align:left; }
+    .project-item:hover,.project-item.active { border-color:var(--lineGold); background:rgba(213,178,88,.1); }
+    .project-item small { color:var(--muted); }
+    .project-card { padding:18px; display:grid; gap:12px; }
+    .status-chip { border-radius:99px; padding:4px 9px; font-size:.68rem; font-weight:900; color:var(--ink); background:var(--gold); white-space:nowrap; }
+    .status-chip.revisions { background:var(--coral); color:#fff; }
+    .status-chip.approved { background:var(--good); }
+    .status-chip.review { background:var(--blue); }
+    .status-chip.hold { background:var(--warn); }
+    .asset-list,.comment-list { display:grid; gap:9px; margin-top:12px; }
+    .asset-item,.comment-item { border:1px solid var(--line); border-radius:var(--radius); background:rgba(255,255,255,.04); padding:11px; }
+    .asset-item a { color:var(--gold2); font-weight:800; overflow-wrap:anywhere; text-decoration:none; }
+    .asset-item span,.comment-item span { display:block; color:var(--muted); font-size:.78rem; margin-top:3px; }
+    .inline-form { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:10px; align-items:end; }
+    .file-input { display:block; width:100%; color:#c7cedd; border:1px dashed var(--lineGold); border-radius:var(--radius); padding:10px; background:rgba(213,178,88,.08); }
+    .progress { height:8px; background:rgba(255,255,255,.07); border-radius:99px; overflow:hidden; margin-bottom:12px; }
+    .progress span { display:block; height:100%; background:linear-gradient(90deg,var(--gold),var(--good)); }
+    .check-item { display:grid; grid-template-columns:24px 1fr; gap:12px; padding:12px 0; border-top:1px solid var(--line); background:transparent; color:var(--text); cursor:pointer; text-align:left; }
+    .box { width:22px; height:22px; border-radius:6px; border:2px solid var(--lineGold); display:grid; place-items:center; }
+    .check-item.done .box { background:var(--gold); border-color:var(--gold); color:var(--ink); }
+    .check-item.done .box::after { content:"✓"; font-weight:900; }
+    .check-item.done .check-text { color:var(--muted); text-decoration:line-through; }
+    .assistant-resource { display:flex; justify-content:space-between; gap:14px; margin-bottom:14px; padding:14px; border:1px solid var(--lineGold); border-radius:var(--radius); background:rgba(213,178,88,.11); }
+    .chat-shell { min-height:540px; display:grid; grid-template-rows:auto auto 1fr auto; overflow:hidden; }
+    .messages { overflow:auto; display:grid; align-content:start; gap:14px; padding:18px; background:rgba(7,17,31,.35); }
+    .msg { display:flex; gap:10px; align-items:start; }
+    .msg.user { flex-direction:row-reverse; }
+    .msg-avatar { width:32px; height:32px; border-radius:50%; display:grid; place-items:center; background:var(--gold); color:var(--ink); font-weight:900; font-size:.72rem; }
+    .msg.user .msg-avatar { color:var(--text); background:rgba(255,255,255,.1); }
+    .bubble { max-width:min(74%,720px); background:rgba(255,255,255,.06); border:1px solid var(--line); padding:12px 14px; border-radius:4px 12px 12px 12px; line-height:1.55; }
+    .msg.user .bubble { border-radius:12px 4px 12px 12px; background:rgba(213,178,88,.13); border-color:var(--lineGold); }
+    .chat-form { display:flex; gap:10px; border-top:1px solid var(--line); padding:14px; }
+    .chat-form input { flex:1; min-height:42px; border-radius:var(--radius); border:1px solid var(--line); background:rgba(255,255,255,.06); color:var(--text); padding:10px 12px; }
+    .empty { color:var(--muted); padding:20px; text-align:center; border:1px dashed var(--line); border-radius:var(--radius); }
+    .error { color:var(--bad); font-size:.82rem; margin-bottom:12px; display:none; }
+    .error.visible { display:block; }
+    @media (max-width:1100px) {
+      .sidebar { transform:translateX(-100%); transition:.2s; }
+      .sidebar.open { transform:translateX(0); }
+      .topbar { left:0; }
+      .main { margin-left:0; }
+      .menu-btn { display:grid; }
+      .hero,.two-col,.project-board { grid-template-columns:1fr; }
+      .project-list { max-height:none; }
     }
-
-    .hero-main::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background:
-        linear-gradient(115deg, rgba(7, 17, 31, 0.95), rgba(7, 17, 31, 0.74) 44%, rgba(7, 17, 31, 0.38)),
-        var(--brand-bg) center / cover no-repeat,
-        linear-gradient(115deg, rgba(213, 178, 88, 0.15), transparent 48%),
-        radial-gradient(circle at 78% 34%, rgba(76, 198, 183, 0.15), transparent 16rem);
-      pointer-events: none;
-    }
-
-    .hero-main > * { position: relative; }
-    .eyebrow { color: var(--gold-2); text-transform: uppercase; letter-spacing: 0.12em; font-size: 0.72rem; font-weight: 900; margin-bottom: 12px; }
-
-    .hero-actions { margin-top: 22px; }
-
-    .market-card { padding: 22px; display: grid; gap: 16px; }
-    .market-title { display: flex; justify-content: space-between; gap: 12px; align-items: center; }
-    .market-title h2, .section-title { font-size: 1rem; font-weight: 900; }
-    .mini-badge { border: 1px solid var(--line-gold); color: var(--gold-2); border-radius: 99px; padding: 5px 9px; font-size: 0.72rem; font-weight: 800; white-space: nowrap; }
-    .market-row { display: flex; justify-content: space-between; gap: 12px; padding: 10px 0; border-top: 1px solid var(--line); }
-    .market-row:first-of-type { border-top: 0; }
-    .market-row span { color: var(--muted); font-size: 0.8rem; }
-    .market-row strong { color: var(--text); font-size: 0.95rem; }
-
-    .mini-chart {
-      height: 78px;
-      display: flex;
-      align-items: end;
-      gap: 7px;
-      padding-top: 6px;
-    }
-
-    .mini-chart i {
-      flex: 1;
-      min-width: 10px;
-      border-radius: 4px 4px 0 0;
-      background: linear-gradient(180deg, var(--gold-2), rgba(213, 178, 88, 0.25));
-    }
-
-    .metric-grid {
-      display: grid;
-      grid-template-columns: repeat(4, minmax(150px, 1fr));
-      gap: 14px;
-      margin-bottom: 22px;
-    }
-
-    .metric {
-      padding: 18px;
-      background: rgba(16, 27, 47, 0.82);
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-    }
-
-    .metric-top { display: flex; justify-content: space-between; align-items: center; gap: 10px; color: var(--muted); font-size: 0.78rem; }
-    .metric svg { width: 18px; height: 18px; color: var(--gold-2); }
-    .metric strong { display: block; margin-top: 10px; color: var(--text); font-size: 1.7rem; line-height: 1; }
-    .metric small { display: block; margin-top: 6px; color: var(--muted); }
-
-    .section-bar { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin: 22px 0 12px; }
-
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-      gap: 14px;
-    }
-
-    .project-board {
-      display: grid;
-      grid-template-columns: minmax(250px, 0.72fr) minmax(360px, 1.28fr);
-      gap: 18px;
-      align-items: start;
-    }
-
-    .project-toolbar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      margin-bottom: 14px;
-      flex-wrap: wrap;
-    }
-
-    .project-toolbar .field {
-      min-width: 210px;
-      margin-bottom: 0;
-    }
-
-    .project-list {
-      display: grid;
-      gap: 10px;
-      max-height: calc(100vh - var(--topbar) - 230px);
-      overflow-y: auto;
-      padding-right: 4px;
-    }
-
-    .project-item {
-      width: 100%;
-      display: grid;
-      gap: 8px;
-      padding: 14px;
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      background: rgba(255, 255, 255, 0.04);
-      color: var(--text);
-      text-align: left;
-      cursor: pointer;
-    }
-
-    .project-item:hover, .project-item.active { border-color: var(--line-gold); background: rgba(213, 178, 88, 0.1); }
-    .project-item strong { line-height: 1.25; }
-    .project-item small { color: var(--muted); line-height: 1.35; }
-
-    .project-line {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-    }
-
-    .status-chip {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 99px;
-      padding: 4px 9px;
-      font-size: 0.68rem;
-      font-weight: 900;
-      color: var(--ink);
-      background: var(--gold);
-      white-space: nowrap;
-    }
-
-    .status-chip.revisions { background: var(--coral); color: #fff; }
-    .status-chip.approved { background: var(--good); color: var(--ink); }
-    .status-chip.review { background: var(--blue); color: var(--ink); }
-    .status-chip.hold { background: var(--warn); color: var(--ink); }
-
-    .project-detail {
-      display: grid;
-      gap: 16px;
-    }
-
-    .project-card {
-      padding: 18px;
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      background: rgba(16, 27, 47, 0.82);
-    }
-
-    .project-card h2, .project-card h3 {
-      font-size: 1rem;
-      margin-bottom: 13px;
-    }
-
-    .project-card textarea {
-      width: 100%;
-      min-height: 92px;
-      resize: vertical;
-      border-radius: var(--radius);
-      border: 1px solid var(--line);
-      background: rgba(255, 255, 255, 0.06);
-      color: var(--text);
-      padding: 10px 12px;
-      outline: none;
-    }
-
-    .project-card textarea:focus { border-color: var(--line-gold); box-shadow: 0 0 0 3px rgba(213, 178, 88, 0.12); }
-
-    .locked-note {
-      color: var(--muted);
-      font-size: 0.82rem;
-      line-height: 1.45;
-      margin-top: -4px;
-    }
-
-    .asset-list, .comment-list {
-      display: grid;
-      gap: 9px;
-      margin-top: 12px;
-    }
-
-    .asset-item, .comment-item {
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      background: rgba(255, 255, 255, 0.04);
-      padding: 11px;
-    }
-
-    .asset-item a { color: var(--gold-2); font-weight: 800; text-decoration: none; overflow-wrap: anywhere; }
-    .asset-item span, .comment-item span { display: block; color: var(--muted); font-size: 0.78rem; margin-top: 3px; }
-    .comment-item p { color: var(--text); line-height: 1.45; margin-bottom: 6px; }
-
-    .inline-form {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) auto;
-      gap: 10px;
-      align-items: end;
-    }
-
-    .file-input {
-      display: block;
-      width: 100%;
-      color: var(--muted-2);
-      border: 1px dashed var(--line-gold);
-      border-radius: var(--radius);
-      padding: 10px;
-      background: rgba(213, 178, 88, 0.08);
-    }
-
-    .quick-card, .resource-card {
-      display: grid;
-      gap: 12px;
-      min-height: 156px;
-      padding: 18px;
-      background: rgba(16, 27, 47, 0.82);
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      cursor: pointer;
-      text-align: left;
-      color: var(--text);
-      transition: border-color 0.18s ease, transform 0.18s ease, background 0.18s ease;
-    }
-
-    .quick-card:hover, .resource-card:hover, .quick-card:focus-visible, .resource-card:focus-visible {
-      border-color: var(--line-gold);
-      background: rgba(23, 36, 58, 0.92);
-      transform: translateY(-2px);
-      outline: none;
-    }
-
-    .quick-icon, .resource-icon {
-      width: 42px;
-      height: 42px;
-      border-radius: var(--radius);
-      display: grid;
-      place-items: center;
-      background: rgba(213, 178, 88, 0.14);
-      color: var(--gold-2);
-    }
-
-    .quick-icon svg, .resource-icon svg { width: 21px; height: 21px; }
-    .quick-card h3, .resource-card h3 { font-size: 0.98rem; }
-    .quick-card p, .resource-card p { color: var(--muted); line-height: 1.48; font-size: 0.86rem; }
-
-    .resource-card { min-height: 196px; align-content: start; }
-    .card-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
-    .tag { display: inline-flex; align-items: center; border-radius: 99px; padding: 4px 9px; font-size: 0.68rem; font-weight: 900; letter-spacing: 0.07em; text-transform: uppercase; }
-    .tag.canva { background: rgba(76, 198, 183, 0.13); color: #81eadf; }
-    .tag.pdf { background: rgba(238, 128, 104, 0.15); color: #ffb09d; }
-    .tag.video { background: rgba(120, 166, 255, 0.15); color: #b9d0ff; }
-    .tag.link { background: rgba(213, 178, 88, 0.15); color: var(--gold-2); }
-    .resource-footer { margin-top: auto; padding-top: 12px; border-top: 1px solid var(--line); display: flex; align-items: center; justify-content: space-between; gap: 12px; }
-    .resource-footer span { color: var(--muted); font-size: 0.78rem; }
-    .open-text { color: var(--gold-2); font-weight: 800; font-size: 0.8rem; white-space: nowrap; }
-
-    .filter-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
-    .filter-btn {
-      border: 1px solid var(--line);
-      color: var(--muted-2);
-      background: rgba(255, 255, 255, 0.04);
-      border-radius: 99px;
-      padding: 8px 13px;
-      cursor: pointer;
-      font-weight: 800;
-      font-size: 0.8rem;
-    }
-
-    .filter-btn.active, .filter-btn:hover { background: var(--gold); color: var(--ink); border-color: var(--gold); }
-
-    .two-col { display: grid; grid-template-columns: minmax(280px, 0.85fr) minmax(320px, 1fr); gap: 18px; align-items: start; }
-    .panel { padding: 22px; }
-    .panel h2 { font-size: 1.02rem; margin-bottom: 16px; }
-
-    .form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
-    .field { margin-bottom: 13px; }
-    .field label { display: block; color: var(--muted-2); font-size: 0.8rem; font-weight: 800; margin-bottom: 6px; }
-    .field input, .field select {
-      width: 100%;
-      min-height: 42px;
-      border-radius: var(--radius);
-      border: 1px solid var(--line);
-      background: rgba(255, 255, 255, 0.06);
-      color: var(--text);
-      padding: 10px 12px;
-      outline: none;
-    }
-
-    .field input:focus, .field select:focus { border-color: var(--line-gold); box-shadow: 0 0 0 3px rgba(213, 178, 88, 0.12); }
-    .field input:disabled, .field select:disabled, .project-card textarea:disabled { opacity: 0.72; cursor: not-allowed; }
-    .field select option { background: var(--panel); }
-    .error { display: none; color: var(--bad); font-size: 0.82rem; line-height: 1.45; margin: 0 0 12px; }
-    .error.visible { display: block; }
-
-    .results {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 12px;
-    }
-
-    .result {
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      padding: 14px;
-    }
-
-    .result span { display: block; color: var(--muted); font-size: 0.75rem; margin-bottom: 5px; }
-    .result strong { font-size: 1.14rem; }
-    .result.total { grid-column: 1 / -1; text-align: center; background: rgba(213, 178, 88, 0.14); border-color: var(--line-gold); }
-    .result.total strong { color: var(--gold-2); font-size: clamp(1.7rem, 5vw, 2.35rem); }
-
-    .afford-note {
-      margin-top: 14px;
-      color: var(--muted);
-      line-height: 1.55;
-      font-size: 0.86rem;
-      border-top: 1px solid var(--line);
-      padding-top: 14px;
-    }
-
-    .tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 15px; }
-    .tab {
-      border: 1px solid var(--line);
-      color: var(--muted-2);
-      background: rgba(255, 255, 255, 0.04);
-      border-radius: 99px;
-      padding: 8px 13px;
-      cursor: pointer;
-      font-weight: 800;
-      font-size: 0.8rem;
-    }
-
-    .tab.active { background: var(--gold); border-color: var(--gold); color: var(--ink); }
-    .check-meta { color: var(--muted); font-size: 0.84rem; margin-bottom: 10px; }
-    .progress { height: 8px; background: rgba(255, 255, 255, 0.07); border-radius: 99px; overflow: hidden; margin-bottom: 12px; }
-    .progress span { display: block; height: 100%; width: 0; background: linear-gradient(90deg, var(--gold), var(--teal)); transition: width 0.2s ease; }
-    .check-list { display: grid; gap: 4px; }
-
-    .check-item {
-      display: grid;
-      grid-template-columns: 24px minmax(0, 1fr);
-      gap: 12px;
-      align-items: start;
-      padding: 12px 0;
-      border-top: 1px solid var(--line);
-      cursor: pointer;
-      color: var(--text);
-      background: transparent;
-      text-align: left;
-    }
-
-    .box {
-      width: 22px;
-      height: 22px;
-      border-radius: 6px;
-      border: 2px solid var(--line-gold);
-      display: grid;
-      place-items: center;
-      color: var(--ink);
-      margin-top: 1px;
-    }
-
-    .check-item.done .box { background: var(--gold); border-color: var(--gold); }
-    .check-item.done .box::after { content: "✓"; font-weight: 900; }
-    .check-item.done .check-text { color: var(--muted); text-decoration: line-through; }
-    .check-text { line-height: 1.4; }
-
-    .chat-shell {
-      height: min(690px, calc(100vh - var(--topbar) - 150px));
-      min-height: 480px;
-      display: grid;
-      grid-template-rows: auto auto 1fr auto;
-      overflow: hidden;
-    }
-
-    .assistant-resource {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 14px;
-      margin-bottom: 14px;
-      padding: 14px;
-      border: 1px solid var(--line-gold);
-      border-radius: var(--radius);
-      background: rgba(213, 178, 88, 0.11);
-    }
-
-    .assistant-resource strong { display: block; margin-bottom: 3px; }
-    .assistant-resource span { color: var(--muted-2); font-size: 0.86rem; line-height: 1.4; }
-
-    .suggestions { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
-    .chip {
-      border: 1px solid var(--line);
-      color: var(--muted-2);
-      background: rgba(255, 255, 255, 0.04);
-      border-radius: 99px;
-      padding: 8px 12px;
-      cursor: pointer;
-      font-size: 0.8rem;
-      font-weight: 800;
-    }
-
-    .chip:hover { border-color: var(--line-gold); color: var(--gold-2); }
-    .messages { overflow-y: auto; display: grid; align-content: start; gap: 14px; padding: 18px; background: rgba(7, 17, 31, 0.35); border-radius: var(--radius) var(--radius) 0 0; }
-    .msg { display: flex; gap: 10px; align-items: start; }
-    .msg.user { flex-direction: row-reverse; }
-    .bubble { max-width: min(74%, 720px); background: rgba(255, 255, 255, 0.06); border: 1px solid var(--line); padding: 12px 14px; border-radius: 4px 12px 12px 12px; line-height: 1.55; color: var(--text); }
-    .msg.user .bubble { border-radius: 12px 4px 12px 12px; background: rgba(213, 178, 88, 0.13); border-color: var(--line-gold); }
-    .msg-avatar { width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; flex: 0 0 auto; color: var(--ink); background: var(--gold); font-size: 0.72rem; font-weight: 900; }
-    .msg.user .msg-avatar { color: var(--text); background: rgba(255, 255, 255, 0.1); }
-    .chat-form { display: flex; gap: 10px; border-top: 1px solid var(--line); padding: 14px; }
-    .chat-form input { flex: 1; min-height: 42px; border-radius: var(--radius); border: 1px solid var(--line); background: rgba(255, 255, 255, 0.06); color: var(--text); padding: 10px 12px; outline: none; }
-    .chat-form input:focus { border-color: var(--line-gold); }
-
-    .empty { color: var(--muted); padding: 24px; text-align: center; border: 1px dashed var(--line); border-radius: var(--radius); }
-
-    @media (max-width: 1100px) {
-      .sidebar { transform: translateX(-100%); transition: transform 0.2s ease; }
-      .sidebar.open { transform: translateX(0); }
-      .topbar { left: 0; }
-      .main { margin-left: 0; width: 100%; }
-      .menu-btn { display: grid; }
-      .metric-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-      .hero, .two-col, .project-board { grid-template-columns: 1fr; }
-      .project-list { max-height: none; }
-    }
-
-    @media (max-width: 720px) {
-      .topbar { padding: 0 14px; }
-      .search-field { display: none; }
-      .page { padding: 20px 14px; }
-      .page-head { display: block; }
-      .button-row { margin-top: 14px; }
-      .hero-main, .panel { padding: 18px; }
-      .metric-grid, .form-grid, .results { grid-template-columns: 1fr; }
-      .bubble { max-width: 86%; }
-      .chat-shell { min-height: 520px; height: calc(100vh - var(--topbar) - 132px); }
-      .inline-form { grid-template-columns: 1fr; }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      *, *::before, *::after { transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
+    @media (max-width:720px) {
+      .topbar { padding:0 14px; }
+      .search-field { display:none; }
+      .page { padding:20px 14px; }
+      .page-head { display:block; }
+      .button-row { margin-top:14px; }
+      .metric-grid,.grid,.form-grid,.results { grid-template-columns:1fr; }
+      .inline-form,.assistant-resource { grid-template-columns:1fr; display:grid; }
     }
   </style>
 </head>
 <body>
-  <a class="skip-nav" href="#main">Skip to main content</a>
-  <div class="overlay" id="overlay" aria-hidden="true"></div>
+  <section class="auth-screen" id="authScreen">
+    <form class="auth-card" id="loginForm">
+      <h1>Mortgage Marketplace Hub</h1>
+      <p>Sign in to access projects, resources, checklists, and team tools.</p>
+      <div class="field"><label for="loginEmail">Email</label><input id="loginEmail" type="email" autocomplete="email" required></div>
+      <div class="field"><label for="loginPassword">Password</label><input id="loginPassword" type="password" autocomplete="current-password" required></div>
+      <button class="btn full" type="submit">Sign in</button>
+      <div class="auth-message" id="authMessage"></div>
+    </form>
+  </section>
 
-  <aside class="sidebar" id="sidebar" aria-label="Main navigation">
+  <div class="overlay" id="overlay" aria-hidden="true"></div>
+  <aside class="sidebar" id="sidebar">
     <div class="brand">
       <div class="brand-row">
-        <div class="brand-mark" aria-hidden="true">
-          <img class="brand-logo-img" src="https://drive.google.com/thumbnail?id=1h3AciZW4bmJCSeJKOUw8r1_CIyAD0rg_&sz=w400" alt="" onerror="this.remove()" />
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M3 10.5 12 3l9 7.5" />
-            <path d="M5 9.5V21h14V9.5" />
-            <path d="M9 21v-7h6v7" />
-          </svg>
+        <div class="brand-mark">
+          <img class="brand-logo-img" src="https://drive.google.com/thumbnail?id=1h3AciZW4bmJCSeJKOUw8r1_CIyAD0rg_&sz=w400" alt="" onerror="this.remove()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M9 21v-7h6v7"/></svg>
         </div>
         <div class="brand-name">Mortgage<br><span>Marketplace</span></div>
       </div>
-      <p class="brand-subtitle">Internal knowledge hub for loans, realtor resources, calculators, and client-ready answers.</p>
+      <p class="brand-subtitle">Internal knowledge hub for loans, realtor resources, calculators, projects, and client-ready answers.</p>
     </div>
-
     <nav class="nav" id="nav"></nav>
-
-    <div class="sidebar-footer">
-      <div class="status-pill"><span class="status-dot"></span><span>Hub ready for customization</span></div>
-      <a class="site-link" href="https://mortgagemarketplace.biz" target="_blank" rel="noreferrer">mortgagemarketplace.biz</a>
-    </div>
+    <div class="sidebar-footer">mortgagemarketplace.biz</div>
   </aside>
 
   <header class="topbar">
     <div class="topbar-left">
-      <button class="menu-btn" id="menuBtn" type="button" aria-label="Open navigation" aria-expanded="false">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16" /></svg>
-      </button>
-      <div>
-        <div class="topbar-title" id="topbarTitle">Dashboard</div>
-        <div class="topbar-kicker">Mortgage Marketplace team workspace</div>
-      </div>
+      <button class="menu-btn" id="menuBtn" type="button">☰</button>
+      <div><div class="topbar-title" id="topbarTitle">Dashboard</div><div class="topbar-kicker" id="roleLine">Mortgage Marketplace team workspace</div></div>
     </div>
-
     <div class="topbar-actions">
-      <label class="search-field" aria-label="Search the hub">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="7" /><path d="m20 20-3.5-3.5" /></svg>
-        <input id="globalSearch" type="search" placeholder="Search flyers, forms, training..." autocomplete="off" />
-      </label>
-      <button class="icon-btn" id="searchJump" type="button" aria-label="Go to resources">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="7" /><path d="m20 20-3.5-3.5" /></svg>
-      </button>
-      <div class="avatar" title="Mortgage Marketplace">MM</div>
+      <label class="search-field"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input id="globalSearch" type="search" placeholder="Search flyers, forms, training..."></label>
+      <button class="icon-btn" id="searchJump" type="button">⌕</button>
+      <button class="btn secondary" id="logoutBtn" type="button">Sign out</button>
+      <div class="avatar" id="avatar">MM</div>
     </div>
   </header>
 
-  <main class="main" id="main" tabindex="-1">
-    <section class="page active" id="page-dashboard" tabindex="-1">
+  <main class="main" id="main">
+    <section class="page active" id="page-dashboard">
       <div class="hero">
         <div class="hero-main">
           <div>
             <div class="eyebrow">Mortgage Marketplace Hub</div>
-            <h1>One place for the team to move loans, educate partners, and answer clients faster.</h1>
-            <p class="lead">Use this as the starting point for your team portal. We can plug in the real Canva flyers, PDF forms, GoHighLevel links, training decks, and AI answers as you send them over.</p>
-            <div class="button-row hero-actions">
-              <button class="btn" type="button" data-go="calculator">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="4" y="3" width="16" height="18" rx="2" /><path d="M8 7h8M8 11h8M8 15h3" /></svg>
-                Calculate payment
-              </button>
-              <button class="btn secondary" type="button" data-go="resources">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 19.5V5a2 2 0 0 1 2-2h11v18H6a2 2 0 0 1-2-1.5Z" /><path d="M17 3h1a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-1" /></svg>
-                Browse resources
-              </button>
-            </div>
+            <h1>One place for the team to move loans, manage projects, and answer clients faster.</h1>
+            <p class="lead">Resources, project approvals, calculators, checklists, and the My Mortgage Assistant GPT in one private workspace.</p>
+            <div class="button-row hero-actions"><button class="btn" data-go="projects" type="button">Open projects</button><button class="btn secondary" data-go="resources" type="button">Browse resources</button></div>
           </div>
         </div>
-
-        <aside class="market-card hero-main" aria-label="Today's focus">
-          <div class="market-title">
-            <h2>Team Pulse</h2>
-            <span class="mini-badge">Today</span>
-          </div>
-          <div class="mini-chart" aria-hidden="true">
-            <i style="height:42%"></i><i style="height:58%"></i><i style="height:36%"></i><i style="height:72%"></i><i style="height:64%"></i><i style="height:86%"></i><i style="height:70%"></i>
-          </div>
-          <div>
-            <div class="market-row"><span>Best next action</span><strong>Follow up with active buyers</strong></div>
-            <div class="market-row"><span>Partner focus</span><strong>Realtor education</strong></div>
-            <div class="market-row"><span>Client answer bank</span><strong>7 topics loaded</strong></div>
-          </div>
+        <aside class="market-card hero-main">
+          <h2>Team Pulse</h2>
+          <div><div class="market-row"><span>Current role</span><strong id="pulseRole">-</strong></div><div class="market-row"><span>Projects</span><strong id="pulseProjects">9 active</strong></div><div class="market-row"><span>AI support</span><strong>Custom GPT linked</strong></div></div>
         </aside>
       </div>
-
       <div class="metric-grid">
-        <div class="metric"><div class="metric-top"><span>Flyer Templates</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /><path d="M14 2v6h6" /></svg></div><strong id="flyerCount">0</strong><small>Canva placeholders</small></div>
-        <div class="metric"><div class="metric-top"><span>Forms & Docs</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="m9 11 3 3L22 4" /><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" /></svg></div><strong id="formCount">0</strong><small>Compliance and intake</small></div>
-        <div class="metric"><div class="metric-top"><span>Training Items</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="m23 7-7 5 7 5V7Z" /><rect x="1" y="5" width="15" height="14" rx="2" /></svg></div><strong id="trainingCount">0</strong><small>Decks and videos</small></div>
-        <div class="metric"><div class="metric-top"><span>Projects</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 7h18" /><path d="M7 3v18" /><path d="M3 13h18" /><path d="M3 19h18" /></svg></div><strong id="projectCount">9</strong><small>Editable workspace</small></div>
+        <div class="metric"><div class="metric-top"><span>Flyers</span></div><strong id="flyerCount">0</strong><small>Canva placeholders</small></div>
+        <div class="metric"><div class="metric-top"><span>Forms</span></div><strong id="formCount">0</strong><small>Compliance and intake</small></div>
+        <div class="metric"><div class="metric-top"><span>Training</span></div><strong id="trainingCount">0</strong><small>Decks and videos</small></div>
+        <div class="metric"><div class="metric-top"><span>Projects</span></div><strong id="projectCount">9</strong><small>Admin editable</small></div>
       </div>
-
-      <div class="section-bar">
-        <h2 class="section-title">Quick Access</h2>
-      </div>
+      <h2 style="font-size:1rem;margin-bottom:12px">Quick Access</h2>
       <div class="grid">
-        <button class="quick-card" type="button" data-go="calculator"><span class="quick-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="4" y="3" width="16" height="18" rx="2" /><path d="M8 7h8M8 11h8M8 15h3" /></svg></span><h3>PITI Calculator</h3><p>Estimate principal, interest, taxes, insurance, HOA, LTV, and debt-to-income pressure.</p></button>
-        <button class="quick-card" type="button" data-go="resources"><span class="quick-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1v19" /></svg></span><h3>Marketing Resources</h3><p>Flyers, forms, compliance links, and class decks in one searchable library.</p></button>
-        <button class="quick-card" type="button" data-go="projects"><span class="quick-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 7h18" /><path d="M7 3v18" /><path d="M3 13h18" /><path d="M3 19h18" /></svg></span><h3>Projects</h3><p>Open the existing Mortgage Marketplace tracker for CRM, ads, AI, and marketing work.</p></button>
-        <button class="quick-card" type="button" data-go="checklists"><span class="quick-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="m9 11 3 3L22 4" /><path d="M3 12h5M3 6h10M3 18h14" /></svg></span><h3>Transaction Checklists</h3><p>Track buyer onboarding, processing, closing, and contract details with saved progress.</p></button>
-        <button class="quick-card" type="button" data-go="assistant"><span class="quick-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4Z" /></svg></span><h3>Client Answer Bank</h3><p>Quick mortgage explanations your team can adapt for buyers and realtor partners.</p></button>
+        <button class="quick-card" data-go="projects" type="button"><span class="quick-icon">📋</span><h3>Projects</h3><p>Track CRM, funnel, AI, and marketing projects with comments and uploads.</p></button>
+        <button class="quick-card" data-go="calculator" type="button"><span class="quick-icon">≡</span><h3>PITI Calculator</h3><p>Estimate monthly payments with DTI and LTV context.</p></button>
+        <button class="quick-card" data-go="resources" type="button"><span class="quick-icon">↗</span><h3>Resources</h3><p>Flyers, forms, decks, links, and AI assistant resources.</p></button>
+        <button class="quick-card" data-go="checklists" type="button"><span class="quick-icon">✓</span><h3>Checklists</h3><p>Buyer onboarding, loan processing, closing, and contract checklists.</p></button>
       </div>
     </section>
 
-    <section class="page" id="page-calculator" tabindex="-1">
+    <section class="page" id="page-projects">
       <div class="page-head">
-        <div>
-          <h1>Mortgage Calculator</h1>
-          <p class="lead">A practical PITI estimate with monthly debts, LTV, and DTI context for quick client conversations.</p>
-        </div>
+        <div><h1>Projects</h1><p class="lead">Admins can modify project details. Users can view, comment, upload assets, and mark review status.</p></div>
+        <div class="button-row"><button class="btn" id="addProjectBtn" type="button">Add project</button><button class="btn secondary" id="resetProjectsBtn" type="button">Reset placeholders</button></div>
       </div>
+      <div class="project-toolbar"><p class="locked-note" id="permissionNote"></p></div>
+      <div class="project-board">
+        <aside class="panel"><h2>Project List</h2><div class="project-list" id="projectList"></div></aside>
+        <section class="project-detail" id="projectDetail"></section>
+      </div>
+    </section>
 
+    <section class="page" id="page-calculator">
+      <div class="page-head"><div><h1>Mortgage Calculator</h1><p class="lead">A practical PITI estimate with monthly debts, LTV, and DTI context.</p></div></div>
       <div class="two-col">
         <form class="panel" id="calcForm">
-          <h2>Loan Details</h2>
-          <p class="error" id="calcError"></p>
-          <div class="field"><label for="homePrice">Home price</label><input id="homePrice" type="number" min="0" step="1000" value="400000" /></div>
-          <div class="form-grid">
-            <div class="field"><label for="downPayment">Down payment</label><input id="downPayment" type="number" min="0" step="1000" value="20000" /></div>
-            <div class="field"><label for="interestRate">Interest rate</label><input id="interestRate" type="number" min="0" step="0.01" value="7.25" /></div>
-          </div>
-          <div class="form-grid">
-            <div class="field"><label for="loanTerm">Loan term</label><select id="loanTerm"><option value="30">30 years</option><option value="25">25 years</option><option value="20">20 years</option><option value="15">15 years</option><option value="10">10 years</option></select></div>
-            <div class="field"><label for="grossIncome">Gross monthly income</label><input id="grossIncome" type="number" min="0" step="100" value="8500" /></div>
-          </div>
-          <div class="form-grid">
-            <div class="field"><label for="monthlyDebt">Monthly debts</label><input id="monthlyDebt" type="number" min="0" step="25" value="650" /></div>
-            <div class="field"><label for="propertyTax">Property tax monthly</label><input id="propertyTax" type="number" min="0" step="25" value="350" /></div>
-          </div>
-          <div class="form-grid">
-            <div class="field"><label for="insurance">Home insurance monthly</label><input id="insurance" type="number" min="0" step="10" value="120" /></div>
-            <div class="field"><label for="hoa">HOA monthly</label><input id="hoa" type="number" min="0" step="10" value="0" /></div>
-          </div>
+          <h2>Loan Details</h2><p class="error" id="calcError"></p>
+          <div class="field"><label>Home price</label><input id="homePrice" type="number" value="400000"></div>
+          <div class="form-grid"><div class="field"><label>Down payment</label><input id="downPayment" type="number" value="20000"></div><div class="field"><label>Interest rate</label><input id="interestRate" type="number" step=".01" value="7.25"></div></div>
+          <div class="form-grid"><div class="field"><label>Loan term</label><select id="loanTerm"><option value="30">30 years</option><option value="20">20 years</option><option value="15">15 years</option></select></div><div class="field"><label>Gross monthly income</label><input id="grossIncome" type="number" value="8500"></div></div>
+          <div class="form-grid"><div class="field"><label>Monthly debts</label><input id="monthlyDebt" type="number" value="650"></div><div class="field"><label>Property tax monthly</label><input id="propertyTax" type="number" value="350"></div></div>
+          <div class="form-grid"><div class="field"><label>Insurance monthly</label><input id="insurance" type="number" value="120"></div><div class="field"><label>HOA monthly</label><input id="hoa" type="number" value="0"></div></div>
           <button class="btn full" type="submit">Calculate payment</button>
         </form>
-
-        <div class="panel">
-          <h2>Payment Breakdown</h2>
-          <div class="results" id="resultGrid"></div>
-          <p class="afford-note" id="affordNote">Enter loan details to see a monthly payment estimate. This is for planning only and does not replace a formal Loan Estimate.</p>
-        </div>
+        <div class="panel"><h2>Payment Breakdown</h2><div class="results" id="resultGrid"></div><p class="afford-note" id="affordNote"></p></div>
       </div>
     </section>
 
-    <section class="page" id="page-resources" tabindex="-1">
-      <div class="page-head">
-        <div>
-          <h1>Resource Library</h1>
-          <p class="lead">Search and filter Mortgage Marketplace flyers, forms, decks, links, and training resources. Real URLs can be dropped into the resource list when you have them.</p>
-        </div>
-        <div class="button-row">
-          <button class="btn secondary" type="button" id="clearSearch">Clear search</button>
-        </div>
-      </div>
-      <div class="filter-row" id="filters"></div>
-      <div class="grid" id="resourceGrid"></div>
+    <section class="page" id="page-resources">
+      <div class="page-head"><div><h1>Resource Library</h1><p class="lead">Search and filter Mortgage Marketplace resources.</p></div><button class="btn secondary" id="clearSearch" type="button">Clear search</button></div>
+      <div class="filter-row" id="filters"></div><div class="grid" id="resourceGrid"></div>
     </section>
 
-    <section class="page" id="page-projects" tabindex="-1">
-      <div class="page-head">
-        <div>
-          <h1>Projects</h1>
-          <p class="lead">Customize active CRM, funnel, AI, and marketing projects. Owners can edit the main details; everyone can comment, upload assets, and mark review status.</p>
-        </div>
-        <div class="button-row">
-          <button class="btn" type="button" id="addProjectBtn">Add project</button>
-          <button class="btn secondary" type="button" id="resetProjectsBtn">Reset placeholders</button>
-        </div>
-      </div>
-      <div class="project-toolbar">
-        <div class="field">
-          <label for="currentUser">Current user</label>
-          <select id="currentUser">
-            <option>Mike</option>
-            <option>Jerome</option>
-            <option>Stacy</option>
-            <option>Summer</option>
-            <option>Marketing Team</option>
-          </select>
-        </div>
-        <p class="locked-note">Owner-only fields lock automatically based on the selected current user.</p>
-      </div>
-      <div class="project-board">
-        <aside class="panel">
-          <h2>Project List</h2>
-          <div class="project-list" id="projectList"></div>
-        </aside>
-        <section class="project-detail" id="projectDetail" aria-live="polite"></section>
-      </div>
+    <section class="page" id="page-checklists">
+      <div class="page-head"><div><h1>Checklists</h1><p class="lead">Progress saves in this browser.</p></div><button class="btn secondary" id="resetChecklist" type="button">Reset current checklist</button></div>
+      <div class="panel"><div class="tabs" id="checkTabs"></div><div class="afford-note" id="checkMeta"></div><div class="progress"><span id="checkProgress"></span></div><div id="checkList"></div></div>
     </section>
 
-    <section class="page" id="page-checklists" tabindex="-1">
-      <div class="page-head">
-        <div>
-          <h1>Checklists</h1>
-          <p class="lead">Progress saves in this browser so the team can come back without losing their place.</p>
-        </div>
-        <div class="button-row">
-          <button class="btn secondary" type="button" id="resetChecklist">Reset current checklist</button>
-        </div>
-      </div>
-      <div class="panel">
-        <div class="tabs" id="checkTabs" role="tablist"></div>
-        <div class="check-meta" id="checkMeta"></div>
-        <div class="progress" aria-hidden="true"><span id="checkProgress"></span></div>
-        <div class="check-list" id="checkList"></div>
-      </div>
-    </section>
-
-    <section class="page" id="page-assistant" tabindex="-1">
-      <div class="page-head">
-        <div>
-          <h1>AI Assistant</h1>
-          <p class="lead">A quick local answer bank plus a direct handoff to your dedicated My Mortgage Assistant GPT.</p>
-        </div>
-        <div class="button-row">
-          <a class="btn" href="https://chatgpt.com/g/g-6a011111a8c481918c68977fb7cabb54-my-mortgage-assistant" target="_blank" rel="noreferrer">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="M7 17 17 7" /><path d="M8 7h9v9" /><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7" /></svg>
-            Open My Mortgage Assistant
-          </a>
-        </div>
-      </div>
+    <section class="page" id="page-assistant">
+      <div class="page-head"><div><h1>AI Assistant</h1><p class="lead">Quick answer bank plus your dedicated My Mortgage Assistant GPT.</p></div><a class="btn" href="https://chatgpt.com/g/g-6a011111a8c481918c68977fb7cabb54-my-mortgage-assistant" target="_blank">Open My Mortgage Assistant</a></div>
       <div class="panel chat-shell">
-        <div class="assistant-resource">
-          <div>
-            <strong>Additional AI resource</strong>
-            <span>Use your custom GPT for deeper borrower scenarios, realtor scripts, and loan-program support.</span>
-          </div>
-          <a class="btn secondary" href="https://chatgpt.com/g/g-6a011111a8c481918c68977fb7cabb54-my-mortgage-assistant" target="_blank" rel="noreferrer">Launch GPT</a>
-        </div>
-        <div class="suggestions" id="suggestions"></div>
-        <div class="messages" id="messages" aria-live="polite"></div>
-        <form class="chat-form" id="chatForm">
-          <input id="chatInput" type="text" placeholder="Ask a mortgage question..." autocomplete="off" aria-label="Ask a mortgage question" />
-          <button class="btn" type="submit" aria-label="Send message">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M22 2 11 13" /><path d="m22 2-7 20-4-9-9-4 20-7Z" /></svg>
-          </button>
-        </form>
+        <div class="assistant-resource"><div><strong>Additional AI resource</strong><p class="afford-note">Use your custom GPT for deeper borrower scenarios, realtor scripts, and loan-program support.</p></div><a class="btn secondary" href="https://chatgpt.com/g/g-6a011111a8c481918c68977fb7cabb54-my-mortgage-assistant" target="_blank">Launch GPT</a></div>
+        <div class="suggestions" id="suggestions"></div><div class="messages" id="messages"></div>
+        <form class="chat-form" id="chatForm"><input id="chatInput" placeholder="Ask a mortgage question..."><button class="btn" type="submit">Send</button></form>
       </div>
     </section>
   </main>
 
-  <script>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-auth.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCxGmR7lGukF4vX7mr0-g-Lf3MOnjRGNqI",
+      authDomain: "mortgage-marketplace-hub.firebaseapp.com",
+      projectId: "mortgage-marketplace-hub",
+      storageBucket: "mortgage-marketplace-hub.firebasestorage.app",
+      messagingSenderId: "771732677919",
+      appId: "1:771732677919:web:51b557fe338ae2ec807c2a",
+      measurementId: "G-3JZ3RJXKK9"
+    };
+
+    const firebaseApp = initializeApp(firebaseConfig);
+    const auth = getAuth(firebaseApp);
+    const db = getFirestore(firebaseApp);
+    let appUser = null;
+
     const icons = {
-      dashboard: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>',
-      calculator: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 7h8M8 11h8M8 15h3"/></svg>',
-      resources: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 19.5V5a2 2 0 0 1 2-2h11v18H6a2 2 0 0 1-2-1.5Z"/><path d="M17 3h1a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-1"/></svg>',
-      projects: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 7h18"/><path d="M7 3v18"/><path d="M3 13h18"/><path d="M3 19h18"/></svg>',
-      checklists: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="m9 11 3 3L22 4"/><path d="M3 12h5M3 6h10M3 18h14"/></svg>',
-      assistant: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4Z"/></svg>',
-      file: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>'
+      dashboard:"⌂", calculator:"≡", projects:"▦", resources:"☷", checklists:"✓", assistant:"◌"
     };
-
     const pages = [
-      { id: "dashboard", title: "Dashboard", group: "Main" },
-      { id: "calculator", title: "Mortgage Calculator", group: "Main" },
-      { id: "projects", title: "Projects", group: "Main" },
-      { id: "resources", title: "Resource Library", group: "Resources", count: 26 },
-      { id: "checklists", title: "Checklists", group: "Tools" },
-      { id: "assistant", title: "AI Assistant", group: "Tools" }
+      {id:"dashboard",title:"Dashboard",group:"Main"},
+      {id:"projects",title:"Projects",group:"Main"},
+      {id:"calculator",title:"Mortgage Calculator",group:"Main"},
+      {id:"resources",title:"Resource Library",group:"Resources"},
+      {id:"checklists",title:"Checklists",group:"Tools"},
+      {id:"assistant",title:"AI Assistant",group:"Tools"}
     ];
-
     const resources = [
-      ["FHA Loan Program", "Canva", "Low down payment overview flyer for first-time buyers.", "Flyers", "Co-branded"],
-      ["VA Loan Program", "Canva", "Zero down payment flyer for eligible veterans and active service members.", "Flyers", "Co-branded"],
-      ["USDA Loan Program", "Canva", "Zero down rural homebuying flyer with eligibility area reminder.", "Flyers", "Co-branded"],
-      ["Down Payment Assistance", "Canva", "DPA overview for buyers who need help with funds to close.", "Flyers", "Co-branded"],
-      ["First-Time Homebuyer", "Canva", "Simple homebuying path for new buyers and realtor partners.", "Flyers", "Co-branded"],
-      ["Renovation Loan", "Canva", "FHA 203k and conventional renovation loan overview.", "Flyers", "Program flyer"],
-      ["Just Listed Flyer", "Canva", "Listing flyer with gold Just Listed variant.", "Flyers", "Listing"],
-      ["Just Reduced Flyer", "Canva", "Listing flyer with coral Just Reduced variant.", "Flyers", "Listing"],
-      ["Loan Application 1003", "PDF", "Uniform Residential Loan Application reference.", "Forms", "FNMA"],
-      ["Loan Estimate", "PDF", "Loan terms, projected payments, and closing cost disclosure.", "Forms", "CFPB"],
-      ["Closing Disclosure", "PDF", "Final costs and terms before closing.", "Forms", "CFPB"],
-      ["Authorization to Release", "PDF", "Income, employment, and credit verification permission.", "Forms", "Internal"],
-      ["Borrower Consent ECOA", "PDF", "Equal Credit Opportunity Act notice and statement.", "Forms", "Compliance"],
-      ["Purchase Agreement Template", "PDF", "Reference contract placeholder. Use state-specific versions.", "Forms", "Reference"],
-      ["NMLS Consumer Access", "Link", "Verify loan officer licensing and company information.", "Forms", "Compliance"],
-      ["Apply Now Funnel", "Link", "Direct link placeholder for GoHighLevel application funnel.", "Forms", "GHL"],
-      ["New LO Onboarding", "Video", "CRM, workflow, and team process walkthrough placeholder.", "Training", "Onboarding"],
-      ["Business Planning Class", "Link", "Realtor education deck for business planning workshop.", "Training", "Deck"],
-      ["Down Payment Assistance Class", "Link", "Program overview, eligibility, and income limit training.", "Training", "Deck"],
-      ["VA Loans for Realtors", "Link", "Entitlement, eligibility, appraisal requirements, and agent tips.", "Training", "Deck"],
-      ["Renovation Loans Overview", "Video", "FHA 203k and conventional rehab loan training.", "Training", "Loan training"],
-      ["Investor Financing", "Link", "Non-owner occupied loans, DSCR, and hard money overview.", "Training", "Deck"],
-      ["My Mortgage Assistant GPT", "Link", "Dedicated ChatGPT assistant for borrower questions, realtor scripts, loan explanations, and scenario support.", "AI Assistant", "Custom GPT"]
-    ].map(([title, type, description, category, meta]) => ({ title, type, description, category, meta, url: "#" }));
-
-    resources.find(item => item.title === "My Mortgage Assistant GPT").url = "https://chatgpt.com/g/g-6a011111a8c481918c68977fb7cabb54-my-mortgage-assistant";
-
+      ["FHA Loan Program","Canva","Low down payment overview flyer for first-time buyers.","Flyers","Co-branded","#"],
+      ["VA Loan Program","Canva","Zero down payment flyer for eligible veterans and active service members.","Flyers","Co-branded","#"],
+      ["USDA Loan Program","Canva","Zero down rural homebuying flyer with eligibility area reminder.","Flyers","Co-branded","#"],
+      ["Down Payment Assistance","Canva","DPA overview for buyers who need help with funds to close.","Flyers","Co-branded","#"],
+      ["First-Time Homebuyer","Canva","Simple homebuying path for new buyers and realtor partners.","Flyers","Co-branded","#"],
+      ["Renovation Loan","Canva","FHA 203k and conventional renovation loan overview.","Flyers","Program flyer","#"],
+      ["Loan Application 1003","PDF","Uniform Residential Loan Application reference.","Forms","FNMA","#"],
+      ["Loan Estimate","PDF","Loan terms, projected payments, and closing cost disclosure.","Forms","CFPB","#"],
+      ["Closing Disclosure","PDF","Final costs and terms before closing.","Forms","CFPB","#"],
+      ["New LO Onboarding","Video","CRM, workflow, and team process walkthrough placeholder.","Training","Onboarding","#"],
+      ["Business Planning Class","Link","Realtor education deck for business planning workshop.","Training","Deck","#"],
+      ["My Mortgage Assistant GPT","Link","Dedicated ChatGPT assistant for borrower questions and realtor scripts.","AI Assistant","Custom GPT","https://chatgpt.com/g/g-6a011111a8c481918c68977fb7cabb54-my-mortgage-assistant"]
+    ].map(([title,type,description,category,meta,url]) => ({title,type,description,category,meta,url}));
     const defaultProjects = [
-      {
-        id: "p1",
-        name: "FB Ad Lead Funnel Pages",
-        owner: "Mike",
-        status: "In Progress",
-        priority: "Urgent",
-        description: "Create two lead funnel pages: First Time Home Buyers and Housing Oregon's Heroes. Use the prior sample fields as the starting point and optimize the page flow.",
-        collaborators: "Jerome, Marketing Team",
-        viewers: "Stacy, Summer",
-        assets: [],
-        comments: []
-      },
-      {
-        id: "p2",
-        name: "Funnel Thank You Pages",
-        owner: "Mike",
-        status: "Not Started",
-        priority: "High",
-        description: "Build thank you pages with a video placeholder, embedded calendar, and Mortgage Marketplace branding.",
-        collaborators: "Jerome",
-        viewers: "Marketing Team",
-        assets: [],
-        comments: []
-      },
-      {
-        id: "p3",
-        name: "Calendar Page Templates",
-        owner: "Mike",
-        status: "Planning",
-        priority: "High",
-        description: "Create 2-3 reusable calendar page templates for loan officers. Keep current live calendar pages untouched until templates are approved.",
-        collaborators: "Jerome, Stacy",
-        viewers: "Summer",
-        assets: [],
-        comments: []
-      },
-      {
-        id: "p4",
-        name: "Open House Sign-In Pages",
-        owner: "Mike",
-        status: "Planning",
-        priority: "High",
-        description: "Create 2-3 branded open house sign-in templates with matching property feedback pages and supporting workflows.",
-        collaborators: "Jerome, Marketing Team",
-        viewers: "Stacy, Summer",
-        assets: [],
-        comments: []
-      },
-      {
-        id: "p5",
-        name: "E-Business Card Landing Pages",
-        owner: "Mike",
-        status: "Not Started",
-        priority: "Medium",
-        description: "Create 2-3 landing page templates for loan officers and realtors based on the reference examples.",
-        collaborators: "Jerome",
-        viewers: "Marketing Team",
-        assets: [],
-        comments: []
-      },
-      {
-        id: "p6",
-        name: "Mortgage Marketplace Hub Logins",
-        owner: "Jerome",
-        status: "In Progress",
-        priority: "High",
-        description: "Create hub logins for Stacy and Summer and confirm access.",
-        collaborators: "Mike",
-        viewers: "Stacy, Summer",
-        assets: [],
-        comments: []
-      },
-      {
-        id: "p7",
-        name: "AI Voice Agent: Realtor Listings",
-        owner: "Mike",
-        status: "Backlog",
-        priority: "Medium",
-        description: "Scope a voice agent that can support realtor listing conversations and lead routing.",
-        collaborators: "Jerome",
-        viewers: "Marketing Team",
-        assets: [],
-        comments: []
-      },
-      {
-        id: "p8",
-        name: "AI Voice Agent: Mortgage Recruits",
-        owner: "Mike",
-        status: "Backlog",
-        priority: "Medium",
-        description: "Scope a voice agent for mortgage recruiting workflows and candidate follow-up.",
-        collaborators: "Jerome",
-        viewers: "Marketing Team",
-        assets: [],
-        comments: []
-      },
-      {
-        id: "p9",
-        name: "Realtor Resource Pages with QR Code",
-        owner: "Mike",
-        status: "Backlog",
-        priority: "Medium",
-        description: "Create realtor-facing resource pages with QR code access for classes, flyers, and partner tools.",
-        collaborators: "Jerome, Marketing Team",
-        viewers: "Stacy, Summer",
-        assets: [],
-        comments: []
-      }
-    ];
-
+      ["p1","FB Ad Lead Funnel Pages","Mike","In Progress","Urgent","Create two lead funnel pages: First Time Home Buyers and Housing Oregon's Heroes. Use prior sample fields as the starting point.","Jerome, Marketing Team","Stacy, Summer"],
+      ["p2","Funnel Thank You Pages","Mike","Not Started","High","Build thank you pages with a video placeholder, embedded calendar, and Mortgage Marketplace branding.","Jerome","Marketing Team"],
+      ["p3","Calendar Page Templates","Mike","Planning","High","Create 2-3 reusable calendar page templates for loan officers. Keep current live pages untouched until approved.","Jerome, Stacy","Summer"],
+      ["p4","Open House Sign-In Pages","Mike","Planning","High","Create 2-3 branded open house sign-in templates with matching property feedback pages and workflows.","Jerome, Marketing Team","Stacy, Summer"],
+      ["p5","E-Business Card Landing Pages","Mike","Not Started","Medium","Create 2-3 landing page templates for loan officers and realtors.","Jerome","Marketing Team"],
+      ["p6","Mortgage Marketplace Hub Logins","Jerome","In Progress","High","Create hub logins for Stacy and Summer and confirm access.","Mike","Stacy, Summer"],
+      ["p7","AI Voice Agent: Realtor Listings","Mike","Backlog","Medium","Scope a voice agent that can support realtor listing conversations and lead routing.","Jerome","Marketing Team"],
+      ["p8","AI Voice Agent: Mortgage Recruits","Mike","Backlog","Medium","Scope a voice agent for mortgage recruiting workflows and candidate follow-up.","Jerome","Marketing Team"],
+      ["p9","Realtor Resource Pages with QR Code","Mike","Backlog","Medium","Create realtor-facing resource pages with QR code access for classes, flyers, and partner tools.","Jerome, Marketing Team","Stacy, Summer"]
+    ].map(([id,name,owner,status,priority,description,collaborators,viewers]) => ({id,name,owner,status,priority,description,collaborators,viewers,assets:[],comments:[]}));
     const checklistData = {
-      buyer: {
-        title: "Buyer Onboarding",
-        items: [
-          "Collect photo ID and Social Security Number",
-          "Pull tri-merge credit report",
-          "Collect last 2 years W2s and tax returns",
-          "Collect last 30 days pay stubs",
-          "Collect last 2 months bank statements",
-          "Complete 1003 loan application",
-          "Issue pre-approval letter",
-          "Send welcome email and set GHL pipeline stage"
-        ]
-      },
-      processing: {
-        title: "Loan Processing",
-        items: [
-          "Order appraisal",
-          "Order title search and title insurance",
-          "Verify employment",
-          "Submit file to underwriting",
-          "Clear all underwriting conditions",
-          "Issue clear to close",
-          "Send Closing Disclosure 3 business days before closing"
-        ]
-      },
-      closing: {
-        title: "Closing Day",
-        items: [
-          "Confirm wire transfer amount with title",
-          "Borrower brings valid photo ID to closing",
-          "Sign all closing documents",
-          "Confirm funding and disbursement",
-          "Record deed with county",
-          "Send congratulations email and request review"
-        ]
-      },
-      contract: {
-        title: "Listing & Contract",
-        items: [
-          "Confirm purchase price and loan amount",
-          "Review earnest money deposit terms",
-          "Note inspection contingency deadline",
-          "Note financing contingency deadline",
-          "Confirm closing date and escrow officer",
-          "Update GHL pipeline to Under Contract"
-        ]
-      }
+      buyer:{title:"Buyer Onboarding",items:["Collect photo ID and Social Security Number","Pull tri-merge credit report","Collect last 2 years W2s and tax returns","Collect last 30 days pay stubs","Collect last 2 months bank statements","Complete 1003 loan application","Issue pre-approval letter","Send welcome email and set GHL pipeline stage"]},
+      processing:{title:"Loan Processing",items:["Order appraisal","Order title search and title insurance","Verify employment","Submit file to underwriting","Clear all underwriting conditions","Issue clear to close","Send Closing Disclosure 3 business days before closing"]},
+      closing:{title:"Closing Day",items:["Confirm wire transfer amount with title","Borrower brings valid photo ID to closing","Sign all closing documents","Confirm funding and disbursement","Record deed with county","Send congratulations email and request review"]},
+      contract:{title:"Listing & Contract",items:["Confirm purchase price and loan amount","Review earnest money deposit terms","Note inspection contingency deadline","Note financing contingency deadline","Confirm closing date and escrow officer","Update GHL pipeline to Under Contract"]}
     };
-
     const answers = [
-      { trigger: ["piti", "principal interest taxes insurance"], label: "What is PITI?", text: "PITI stands for Principal, Interest, Taxes, and Insurance. It is the main way lenders and borrowers talk about the core monthly mortgage payment. HOA dues and mortgage insurance may also be part of the full monthly housing expense." },
-      { trigger: ["fha", "conventional"], label: "FHA vs conventional", text: "FHA is often easier to qualify for and can work well for buyers with lower credit scores or smaller down payments. Conventional can be more cost-effective for strong-credit borrowers, especially when mortgage insurance can eventually drop off." },
-      { trigger: ["dti", "debt to income", "debt-to-income"], label: "Good DTI ratio", text: "Debt-to-income ratio compares monthly debt payments to gross monthly income. Many files are strongest at 43% or lower, but some programs allow higher ratios depending on credit, reserves, loan type, and other compensating factors." },
-      { trigger: ["closing", "how long", "timeline"], label: "How long does closing take?", text: "A typical purchase closing often takes 30 to 45 days from contract to close. Appraisal timing, underwriting conditions, title work, and borrower document speed can all affect the timeline." },
-      { trigger: ["va", "veteran", "eligibility"], label: "VA eligibility", text: "VA loans are designed for eligible service members, veterans, and some surviving spouses. They can offer zero down payment, no monthly PMI, and competitive terms. Eligibility is confirmed with a Certificate of Eligibility." },
-      { trigger: ["usda", "rural", "zero down"], label: "USDA basics", text: "USDA loans can offer zero down payment for eligible properties in qualified areas. They also have income limits based on household size and location, so both borrower and property eligibility matter." },
-      { trigger: ["down payment", "assistance", "dpa"], label: "Down payment assistance", text: "Down payment assistance can come as a grant, forgivable loan, deferred second mortgage, or repayable second mortgage. Rules vary by state, county, income, occupancy, and purchase price." }
+      {trigger:["piti"],label:"What is PITI?",text:"PITI stands for Principal, Interest, Taxes, and Insurance. HOA dues and mortgage insurance may also be part of the full housing expense."},
+      {trigger:["fha","conventional"],label:"FHA vs conventional",text:"FHA is often easier to qualify for. Conventional can be more cost-effective for strong-credit borrowers, especially when PMI can drop off."},
+      {trigger:["dti","debt"],label:"Good DTI ratio",text:"DTI compares monthly debt payments to gross monthly income. Many files are strongest at 43% or lower, though some programs allow higher."},
+      {trigger:["closing","timeline"],label:"How long does closing take?",text:"A typical purchase closing often takes 30 to 45 days from contract to close."}
     ];
-
-    let currentPage = "dashboard";
-    let activeFilter = "All";
-    let activeChecklist = "buyer";
-    let activeProjectId = "p1";
-
-    const qs = (sel, root = document) => root.querySelector(sel);
-    const qsa = (sel, root = document) => [...root.querySelectorAll(sel)];
-    const money = value => "$" + Number(value || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-    const escapeHtml = value => String(value ?? "").replace(/[&<>"']/g, char => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" }[char]));
+    let currentPage = "dashboard", activeFilter = "All", activeChecklist = "buyer", activeProjectId = "p1";
+    const qs = (s,r=document) => r.querySelector(s);
+    const qsa = (s,r=document) => [...r.querySelectorAll(s)];
+    const money = v => "$" + Number(v || 0).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
+    const esc = v => String(v ?? "").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
+    const isAdmin = () => appUser?.role === "admin";
 
     function init() {
-      renderNav();
-      renderResources();
-      renderFilters();
-      ensureProjects();
-      renderProjects();
-      renderChecklistTabs();
-      renderChecklist();
-      renderSuggestions();
-      bindEvents();
-      calcMortgage();
-      updateMetrics();
-      addMessage("Hi. I am the Mortgage Marketplace assistant. Ask me about loan programs, mortgage terms, buyer questions, or realtor partner talking points. For deeper scenarios, use the My Mortgage Assistant GPT link above.", "bot");
+      renderNav(); renderResources(); renderFilters(); ensureProjects(); renderProjects(); renderChecklistTabs(); renderChecklist(); renderSuggestions(); bindEvents(); calcMortgage(); updateMetrics();
+      qs("#roleLine").textContent = `${appUser.name} · ${appUser.role.toUpperCase()}`;
+      qs("#pulseRole").textContent = appUser.role.toUpperCase();
+      qs("#avatar").textContent = isAdmin() ? "AD" : "US";
+      addMessage("Hi. I am the Mortgage Marketplace assistant. Use the custom GPT link above for deeper scenarios.", "bot");
     }
-
+    async function loadUserProfile(user) {
+      const snap = await getDoc(doc(db,"users",user.uid));
+      const data = snap.exists() ? snap.data() : {};
+      appUser = { uid:user.uid, email:user.email, name:data.name || data.Name || user.email, role:String(data.role || data.Role || "user").toLowerCase() };
+    }
+    function setupAuth() {
+      qs("#loginForm").addEventListener("submit", async e => {
+        e.preventDefault(); qs("#authMessage").textContent = "";
+        try { await signInWithEmailAndPassword(auth, qs("#loginEmail").value.trim(), qs("#loginPassword").value); }
+        catch { qs("#authMessage").textContent = "Login failed. Check the email and password."; }
+      });
+      qs("#logoutBtn").addEventListener("click", () => signOut(auth));
+      onAuthStateChanged(auth, async user => {
+        if (!user) { appUser=null; qs("#authScreen").classList.remove("hidden"); return; }
+        await loadUserProfile(user); qs("#authScreen").classList.add("hidden"); init();
+      });
+    }
     function renderNav() {
-      const nav = qs("#nav");
-      nav.innerHTML = "";
-      let lastGroup = "";
-      pages.forEach(page => {
-        if (page.group !== lastGroup) {
-          const label = document.createElement("div");
-          label.className = "nav-label";
-          label.textContent = page.group;
-          nav.append(label);
-          lastGroup = page.group;
-        }
-        const btn = document.createElement("button");
-        btn.type = "button";
-        btn.className = "nav-item" + (page.id === currentPage ? " active" : "");
-        btn.dataset.page = page.id;
-        btn.innerHTML = `${icons[page.id]}<span>${page.title}</span>${page.count ? `<span class="count">${resources.length}</span>` : ""}`;
-        btn.addEventListener("click", () => navigate(page.id));
-        nav.append(btn);
+      const nav = qs("#nav"); nav.innerHTML = ""; let group = "";
+      pages.forEach(p => {
+        if (p.group !== group) { const label=document.createElement("div"); label.className="nav-label"; label.textContent=p.group; nav.append(label); group=p.group; }
+        const b=document.createElement("button"); b.className="nav-item"+(p.id===currentPage?" active":""); b.type="button"; b.dataset.page=p.id; b.innerHTML=`<span>${icons[p.id]}</span><span>${p.title}</span>`; b.onclick=()=>navigate(p.id); nav.append(b);
       });
     }
-
-    function navigate(pageId) {
-      currentPage = pageId;
-      qsa(".page").forEach(page => page.classList.remove("active"));
-      const page = qs(`#page-${pageId}`);
-      if (page) {
-        page.classList.add("active");
-        page.focus({ preventScroll: true });
-      }
-      qsa(".nav-item").forEach(btn => btn.classList.toggle("active", btn.dataset.page === pageId));
-      qs("#topbarTitle").textContent = pages.find(page => page.id === pageId)?.title || pageId;
-      closeSidebar();
+    function navigate(id) {
+      currentPage=id; qsa(".page").forEach(p=>p.classList.remove("active")); qs(`#page-${id}`)?.classList.add("active");
+      qsa(".nav-item").forEach(b=>b.classList.toggle("active",b.dataset.page===id)); qs("#topbarTitle").textContent=pages.find(p=>p.id===id)?.title || id; closeSidebar();
     }
-
     function bindEvents() {
-      qs("#menuBtn").addEventListener("click", toggleSidebar);
-      qs("#overlay").addEventListener("click", closeSidebar);
-      qsa("[data-go]").forEach(el => el.addEventListener("click", () => navigate(el.dataset.go)));
-      qs("#calcForm").addEventListener("submit", event => { event.preventDefault(); calcMortgage(); });
-      qsa("#calcForm input, #calcForm select").forEach(el => el.addEventListener("input", calcMortgage));
-      qs("#globalSearch").addEventListener("input", () => {
-        renderResources();
-        if (currentPage !== "resources") navigate("resources");
-      });
-      qs("#searchJump").addEventListener("click", () => navigate("resources"));
-      qs("#clearSearch").addEventListener("click", () => {
-        qs("#globalSearch").value = "";
-        activeFilter = "All";
-        renderFilters();
-        renderResources();
-      });
-      qs("#resetChecklist").addEventListener("click", resetActiveChecklist);
-      qs("#currentUser").addEventListener("change", renderProjects);
-      qs("#addProjectBtn").addEventListener("click", addProject);
-      qs("#resetProjectsBtn").addEventListener("click", resetProjects);
-      qs("#chatForm").addEventListener("submit", event => {
-        event.preventDefault();
-        sendChat(qs("#chatInput").value);
-      });
-      window.addEventListener("keydown", event => {
-        if (event.key === "Escape") closeSidebar();
-      });
+      qs("#menuBtn").onclick=toggleSidebar; qs("#overlay").onclick=closeSidebar; qsa("[data-go]").forEach(el=>el.onclick=()=>navigate(el.dataset.go));
+      qs("#calcForm").onsubmit=e=>{e.preventDefault();calcMortgage();}; qsa("#calcForm input,#calcForm select").forEach(el=>el.oninput=calcMortgage);
+      qs("#globalSearch").oninput=()=>{renderResources(); if(currentPage!=="resources") navigate("resources");}; qs("#searchJump").onclick=()=>navigate("resources");
+      qs("#clearSearch").onclick=()=>{qs("#globalSearch").value=""; activeFilter="All"; renderFilters(); renderResources();};
+      qs("#resetChecklist").onclick=resetActiveChecklist; qs("#addProjectBtn").onclick=addProject; qs("#resetProjectsBtn").onclick=resetProjects;
+      qs("#chatForm").onsubmit=e=>{e.preventDefault();sendChat(qs("#chatInput").value);}; window.onkeydown=e=>{if(e.key==="Escape")closeSidebar();};
     }
-
-    function toggleSidebar() {
-      const sidebar = qs("#sidebar");
-      const open = !sidebar.classList.contains("open");
-      sidebar.classList.toggle("open", open);
-      qs("#overlay").classList.toggle("visible", open);
-      qs("#menuBtn").setAttribute("aria-expanded", String(open));
-    }
-
-    function closeSidebar() {
-      qs("#sidebar").classList.remove("open");
-      qs("#overlay").classList.remove("visible");
-      qs("#menuBtn").setAttribute("aria-expanded", "false");
-    }
-
+    function toggleSidebar(){const s=qs("#sidebar"),o=!s.classList.contains("open");s.classList.toggle("open",o);qs("#overlay").classList.toggle("visible",o);}
+    function closeSidebar(){qs("#sidebar").classList.remove("open");qs("#overlay").classList.remove("visible");}
     function calcMortgage() {
-      const values = {
-        price: Number(qs("#homePrice").value),
-        down: Number(qs("#downPayment").value),
-        rate: Number(qs("#interestRate").value),
-        term: Number(qs("#loanTerm").value),
-        income: Number(qs("#grossIncome").value),
-        debt: Number(qs("#monthlyDebt").value),
-        tax: Number(qs("#propertyTax").value),
-        insurance: Number(qs("#insurance").value),
-        hoa: Number(qs("#hoa").value)
-      };
-
-      const error = qs("#calcError");
-      error.classList.remove("visible");
-      if (values.price <= 0 || values.term <= 0 || Object.values(values).some(v => Number.isNaN(v) || v < 0)) {
-        error.textContent = "Use positive numbers for the estimate.";
-        error.classList.add("visible");
-        return;
-      }
-      if (values.down >= values.price) {
-        error.textContent = "Down payment must be less than the home price.";
-        error.classList.add("visible");
-        return;
-      }
-
-      const principal = values.price - values.down;
-      const months = values.term * 12;
-      const monthlyRate = values.rate / 100 / 12;
-      const pi = monthlyRate > 0
-        ? principal * (monthlyRate * Math.pow(1 + monthlyRate, months)) / (Math.pow(1 + monthlyRate, months) - 1)
-        : principal / months;
-      const total = pi + values.tax + values.insurance + values.hoa;
-      const ltv = principal / values.price * 100;
-      const dti = values.income > 0 ? (total + values.debt) / values.income * 100 : 0;
-
-      qs("#resultGrid").innerHTML = `
-        <div class="result"><span>Loan amount</span><strong>${money(principal)}</strong></div>
-        <div class="result"><span>Principal & interest</span><strong>${money(pi)}</strong></div>
-        <div class="result"><span>Taxes</span><strong>${money(values.tax)}</strong></div>
-        <div class="result"><span>Insurance</span><strong>${money(values.insurance)}</strong></div>
-        <div class="result"><span>HOA</span><strong>${money(values.hoa)}</strong></div>
-        <div class="result"><span>LTV</span><strong>${ltv.toFixed(1)}%</strong></div>
-        <div class="result"><span>Estimated DTI</span><strong>${dti.toFixed(1)}%</strong></div>
-        <div class="result total"><span>Total monthly payment</span><strong>${money(total)}</strong></div>
-      `;
-
-      let tone = "This looks like a reasonable starting point to review with a licensed loan officer.";
-      if (dti > 50) tone = "This estimate shows a higher DTI. It may need stronger compensating factors, lower debts, more income, or a different structure.";
-      else if (dti > 43) tone = "This estimate is above the common 43% benchmark, but some programs may still allow it depending on the full file.";
-      qs("#affordNote").textContent = `${tone} Estimated DTI includes the mortgage payment plus listed monthly debts.`;
+      const price=+qs("#homePrice").value, down=+qs("#downPayment").value, rate=+qs("#interestRate").value, term=+qs("#loanTerm").value, income=+qs("#grossIncome").value, debt=+qs("#monthlyDebt").value, tax=+qs("#propertyTax").value, ins=+qs("#insurance").value, hoa=+qs("#hoa").value;
+      const err=qs("#calcError"); err.classList.remove("visible"); if(price<=0||down>=price){err.textContent="Check the home price and down payment."; err.classList.add("visible"); return;}
+      const principal=price-down, n=term*12, mo=rate/100/12, pi=mo>0?principal*(mo*Math.pow(1+mo,n))/(Math.pow(1+mo,n)-1):principal/n, total=pi+tax+ins+hoa, ltv=principal/price*100, dti=income>0?(total+debt)/income*100:0;
+      qs("#resultGrid").innerHTML=`<div class="result"><span>Loan amount</span><strong>${money(principal)}</strong></div><div class="result"><span>Principal & interest</span><strong>${money(pi)}</strong></div><div class="result"><span>Taxes</span><strong>${money(tax)}</strong></div><div class="result"><span>Insurance</span><strong>${money(ins)}</strong></div><div class="result"><span>HOA</span><strong>${money(hoa)}</strong></div><div class="result"><span>LTV</span><strong>${ltv.toFixed(1)}%</strong></div><div class="result"><span>Estimated DTI</span><strong>${dti.toFixed(1)}%</strong></div><div class="result total"><span>Total monthly payment</span><strong>${money(total)}</strong></div>`;
+      qs("#affordNote").textContent = `Estimated DTI includes the mortgage payment plus listed monthly debts.`;
     }
-
-    function renderFilters() {
-      const filters = ["All", ...new Set(resources.map(item => item.category)), ...new Set(resources.map(item => item.type))];
-      qs("#filters").innerHTML = "";
-      filters.forEach(filter => {
-        const btn = document.createElement("button");
-        btn.type = "button";
-        btn.className = "filter-btn" + (filter === activeFilter ? " active" : "");
-        btn.textContent = filter;
-        btn.addEventListener("click", () => {
-          activeFilter = filter;
-          renderFilters();
-          renderResources();
-        });
-        qs("#filters").append(btn);
-      });
+    function renderFilters(){const filters=["All",...new Set(resources.map(r=>r.category)),...new Set(resources.map(r=>r.type))]; qs("#filters").innerHTML=""; filters.forEach(f=>{const b=document.createElement("button");b.className="filter-btn"+(f===activeFilter?" active":"");b.textContent=f;b.onclick=()=>{activeFilter=f;renderFilters();renderResources();};qs("#filters").append(b);});}
+    function renderResources(){const term=qs("#globalSearch")?.value.trim().toLowerCase()||""; const data=resources.filter(r=>(activeFilter==="All"||r.category===activeFilter||r.type===activeFilter)&&`${r.title} ${r.type} ${r.description} ${r.category} ${r.meta}`.toLowerCase().includes(term)); const grid=qs("#resourceGrid"); grid.innerHTML=data.length?"":'<div class="empty">No matching resources yet.</div>'; data.forEach(r=>{const a=document.createElement("a");a.className="resource-card";a.href=r.url;a.target=r.url==="#"?"":"_blank";a.innerHTML=`<div class="card-top"><span class="resource-icon">↗</span><span class="tag">${r.type}</span></div><h3>${esc(r.title)}</h3><p>${esc(r.description)}</p><div class="resource-footer"><span>${esc(r.meta)}</span><span class="open-text">${r.url==="#"?"Add link":"Open"}</span></div>`;grid.append(a);});}
+    const projectKey=()=>"mmhub-projects";
+    function ensureProjects(){if(!localStorage.getItem(projectKey()))localStorage.setItem(projectKey(),JSON.stringify(defaultProjects));}
+    function getProjects(){try{return JSON.parse(localStorage.getItem(projectKey()))||defaultProjects}catch{return defaultProjects}}
+    function saveProjects(p){localStorage.setItem(projectKey(),JSON.stringify(p));}
+    function activeProject(){const p=getProjects();return p.find(x=>x.id===activeProjectId)||p[0];}
+    function statusClass(s){const l=s.toLowerCase(); if(l.includes("revision"))return"revisions"; if(l.includes("approved")||l.includes("complete"))return"approved"; if(l.includes("review"))return"review"; if(l.includes("hold")||l.includes("backlog"))return"hold"; return"";}
+    function renderProjects(){const projects=getProjects(); if(!projects.find(p=>p.id===activeProjectId)&&projects.length)activeProjectId=projects[0].id; qs("#permissionNote").textContent=isAdmin()?"Admin mode: you can edit project details and create projects.":"User mode: you can view, comment, upload assets, and mark review status."; qs("#addProjectBtn").disabled=!isAdmin(); qs("#resetProjectsBtn").disabled=!isAdmin(); const list=qs("#projectList"); list.innerHTML=""; projects.forEach(p=>{const b=document.createElement("button");b.className="project-item"+(p.id===activeProjectId?" active":"");b.innerHTML=`<div class="project-line"><strong>${esc(p.name)}</strong><span class="status-chip ${statusClass(p.status)}">${esc(p.status)}</span></div><small>Owner: ${esc(p.owner)} · ${esc(p.priority)} priority</small><small>${p.assets?.length||0} assets · ${p.comments?.length||0} comments</small>`;b.onclick=()=>{activeProjectId=p.id;renderProjects();};list.append(b);}); renderProjectDetail(); updateMetrics();}
+    function renderProjectDetail(){const p=activeProject(); if(!p)return; const disabled=isAdmin()?"":"disabled"; qs("#projectDetail").innerHTML=`<div class="project-card"><div class="project-line"><h2>Project Details</h2><span class="status-chip ${statusClass(p.status)}">${esc(p.status)}</span></div><p class="locked-note">${isAdmin()?"You are Admin. You can edit this project.":"Only Admin can edit project details. You can still comment, upload assets, and mark status."}</p><div class="form-grid"><div class="field"><label>Project name</label><input id="projectName" value="${esc(p.name)}" ${disabled}></div><div class="field"><label>Owner</label><input id="projectOwner" value="${esc(p.owner)}" ${disabled}></div></div><div class="form-grid"><div class="field"><label>Priority</label><select id="projectPriority" ${disabled}>${["Low","Medium","High","Urgent"].map(x=>`<option ${x===p.priority?"selected":""}>${x}</option>`).join("")}</select></div><div class="field"><label>Status / review</label><select id="projectStatus">${["Not Started","Planning","In Progress","Waiting for Review","Needs Revisions","Approved","Complete","On Hold","Backlog"].map(x=>`<option ${x===p.status?"selected":""}>${x}</option>`).join("")}</select></div></div><div class="field"><label>Description</label><textarea id="projectDescription" ${disabled}>${esc(p.description)}</textarea></div><div class="form-grid"><div class="field"><label>Collaborators</label><input id="projectCollaborators" value="${esc(p.collaborators)}" ${disabled}></div><div class="field"><label>Viewers</label><input id="projectViewers" value="${esc(p.viewers)}" ${disabled}></div></div><div class="button-row"><button class="btn" id="saveProjectBtn" ${isAdmin()?"":"disabled"}>Save details</button><button class="btn secondary" data-review="Approved">Approve</button><button class="btn secondary" data-review="Needs Revisions">Needs revisions</button></div></div><div class="project-card"><h3>Assets & Links</h3><div class="inline-form"><div class="field"><label>Add a project link</label><input id="projectLink" placeholder="https://..."></div><button class="btn secondary" id="addLinkBtn">Add link</button></div><div class="field"><label>Upload files or screenshots</label><input class="file-input" id="projectFiles" type="file" multiple></div><div class="asset-list">${renderAssets(p.assets)}</div></div><div class="project-card"><h3>Comments</h3><div class="field"><label>Add a comment as ${esc(appUser.name)}</label><textarea id="commentText"></textarea></div><div class="field"><label>Attach files to comment</label><input class="file-input" id="commentFiles" type="file" multiple></div><button class="btn" id="addCommentBtn">Post comment</button><div class="comment-list">${renderComments(p.comments)}</div></div>`;
+      qs("#saveProjectBtn").onclick=saveProjectDetails; qs("#projectStatus").onchange=e=>updateProjectStatus(e.target.value); qsa("[data-review]").forEach(b=>b.onclick=()=>updateProjectStatus(b.dataset.review,true)); qs("#addLinkBtn").onclick=addProjectLink; qs("#projectFiles").onchange=e=>addProjectFiles(e.target.files,"Project asset"); qs("#addCommentBtn").onclick=addProjectComment;
     }
-
-    function renderResources() {
-      const term = qs("#globalSearch")?.value.trim().toLowerCase() || "";
-      const filtered = resources.filter(item => {
-        const matchesFilter = activeFilter === "All" || item.category === activeFilter || item.type === activeFilter;
-        const haystack = `${item.title} ${item.type} ${item.description} ${item.category} ${item.meta}`.toLowerCase();
-        return matchesFilter && haystack.includes(term);
-      });
-
-      const grid = qs("#resourceGrid");
-      grid.innerHTML = "";
-      if (!filtered.length) {
-        grid.innerHTML = '<div class="empty">No matching resources yet. Clear the search or choose another filter.</div>';
-        return;
-      }
-
-      filtered.forEach(item => {
-        const card = document.createElement("a");
-        card.className = "resource-card";
-        card.href = item.url;
-        card.setAttribute("aria-label", `${item.title}, ${item.type}`);
-        card.innerHTML = `
-          <div class="card-top">
-            <span class="resource-icon">${icons.file}</span>
-            <span class="tag ${item.type.toLowerCase()}">${item.type}</span>
-          </div>
-          <h3>${item.title}</h3>
-          <p>${item.description}</p>
-          <div class="resource-footer"><span>${item.meta}</span><span class="open-text">${item.url === "#" ? "Add link" : "Open"}</span></div>
-        `;
-        grid.append(card);
-      });
-    }
-
-    function projectKey() {
-      return "mmhub-projects";
-    }
-
-    function ensureProjects() {
-      if (!localStorage.getItem(projectKey())) {
-        localStorage.setItem(projectKey(), JSON.stringify(defaultProjects));
-      }
-    }
-
-    function getProjects() {
-      try { return JSON.parse(localStorage.getItem(projectKey())) || defaultProjects; }
-      catch { return defaultProjects; }
-    }
-
-    function saveProjects(projects) {
-      localStorage.setItem(projectKey(), JSON.stringify(projects));
-    }
-
-    function getActiveProject() {
-      const projects = getProjects();
-      return projects.find(project => project.id === activeProjectId) || projects[0];
-    }
-
-    function currentUser() {
-      return qs("#currentUser")?.value || "Mike";
-    }
-
-    function statusClass(status) {
-      const lower = status.toLowerCase();
-      if (lower.includes("revision")) return "revisions";
-      if (lower.includes("approved") || lower.includes("complete")) return "approved";
-      if (lower.includes("review")) return "review";
-      if (lower.includes("hold") || lower.includes("backlog")) return "hold";
-      return "";
-    }
-
-    function renderProjects() {
-      const projects = getProjects();
-      if (!projects.find(project => project.id === activeProjectId) && projects.length) activeProjectId = projects[0].id;
-      const list = qs("#projectList");
-      list.innerHTML = "";
-
-      projects.forEach(project => {
-        const item = document.createElement("button");
-        item.type = "button";
-        item.className = "project-item" + (project.id === activeProjectId ? " active" : "");
-        item.innerHTML = `
-          <div class="project-line">
-            <strong>${escapeHtml(project.name)}</strong>
-            <span class="status-chip ${statusClass(project.status)}">${escapeHtml(project.status)}</span>
-          </div>
-          <small>Owner: ${escapeHtml(project.owner)} · ${escapeHtml(project.priority)} priority</small>
-          <small>${(project.assets?.length || 0)} assets · ${(project.comments?.length || 0)} comments</small>
-        `;
-        item.addEventListener("click", () => {
-          activeProjectId = project.id;
-          renderProjects();
-        });
-        list.append(item);
-      });
-
-      renderProjectDetail();
-      updateMetrics();
-    }
-
-    function renderProjectDetail() {
-      const project = getActiveProject();
-      const user = currentUser();
-      const canEdit = project.owner === user;
-      const detail = qs("#projectDetail");
-      const disabled = canEdit ? "" : "disabled";
-      detail.innerHTML = `
-        <div class="project-card">
-          <div class="project-line">
-            <h2>Project Details</h2>
-            <span class="status-chip ${statusClass(project.status)}">${escapeHtml(project.status)}</span>
-          </div>
-          <p class="locked-note">${canEdit ? "You are the owner. You can edit this project's main details." : `Only ${escapeHtml(project.owner)} can edit this project's main details. You can still comment, upload, and mark review status.`}</p>
-          <div class="form-grid">
-            <div class="field"><label for="projectName">Project name</label><input id="projectName" value="${escapeHtml(project.name)}" ${disabled}></div>
-            <div class="field"><label for="projectOwner">Owner</label><select id="projectOwner" ${disabled}>${["Mike", "Jerome", "Stacy", "Summer", "Marketing Team"].map(name => `<option ${name === project.owner ? "selected" : ""}>${name}</option>`).join("")}</select></div>
-          </div>
-          <div class="form-grid">
-            <div class="field"><label for="projectPriority">Priority</label><select id="projectPriority" ${disabled}>${["Low", "Medium", "High", "Urgent"].map(name => `<option ${name === project.priority ? "selected" : ""}>${name}</option>`).join("")}</select></div>
-            <div class="field"><label for="projectStatus">Status / review</label><select id="projectStatus">${["Not Started", "Planning", "In Progress", "Waiting for Review", "Needs Revisions", "Approved", "Complete", "On Hold", "Backlog"].map(name => `<option ${name === project.status ? "selected" : ""}>${name}</option>`).join("")}</select></div>
-          </div>
-          <div class="field"><label for="projectDescription">Description</label><textarea id="projectDescription" ${disabled}>${escapeHtml(project.description)}</textarea></div>
-          <div class="form-grid">
-            <div class="field"><label for="projectCollaborators">Collaborators</label><input id="projectCollaborators" value="${escapeHtml(project.collaborators)}" ${disabled}></div>
-            <div class="field"><label for="projectViewers">Viewers</label><input id="projectViewers" value="${escapeHtml(project.viewers)}" ${disabled}></div>
-          </div>
-          <div class="button-row">
-            <button class="btn" type="button" id="saveProjectBtn" ${canEdit ? "" : "disabled"}>Save details</button>
-            <button class="btn secondary" type="button" data-review="Approved">Approve</button>
-            <button class="btn secondary" type="button" data-review="Needs Revisions">Needs revisions</button>
-          </div>
-        </div>
-
-        <div class="project-card">
-          <h3>Assets & Links</h3>
-          <div class="inline-form">
-            <div class="field"><label for="projectLink">Add a project link</label><input id="projectLink" placeholder="https://..."></div>
-            <button class="btn secondary" type="button" id="addLinkBtn">Add link</button>
-          </div>
-          <div class="field"><label for="projectFiles">Upload files or screenshots</label><input class="file-input" id="projectFiles" type="file" multiple></div>
-          <div class="asset-list">${renderAssetList(project.assets)}</div>
-        </div>
-
-        <div class="project-card">
-          <h3>Comments</h3>
-          <div class="field"><label for="commentText">Add a comment as ${escapeHtml(user)}</label><textarea id="commentText" placeholder="Add feedback, approval notes, or revision requests..."></textarea></div>
-          <div class="field"><label for="commentFiles">Attach files to comment</label><input class="file-input" id="commentFiles" type="file" multiple></div>
-          <button class="btn" type="button" id="addCommentBtn">Post comment</button>
-          <div class="comment-list">${renderCommentList(project.comments)}</div>
-        </div>
-      `;
-
-      qs("#saveProjectBtn")?.addEventListener("click", saveActiveProjectDetails);
-      qs("#projectStatus")?.addEventListener("change", event => updateProjectStatus(event.target.value));
-      qsa("[data-review]", detail).forEach(btn => btn.addEventListener("click", () => updateProjectStatus(btn.dataset.review, true)));
-      qs("#addLinkBtn")?.addEventListener("click", addProjectLink);
-      qs("#projectFiles")?.addEventListener("change", event => addProjectFiles(event.target.files, "Project asset"));
-      qs("#addCommentBtn")?.addEventListener("click", addProjectComment);
-    }
-
-    function renderAssetList(assets = []) {
-      if (!assets.length) return '<div class="empty">No assets yet. Upload a screenshot, document, or add a link.</div>';
-      return assets.map(asset => {
-        const href = asset.url || asset.dataUrl || "#";
-        return `<div class="asset-item"><a href="${escapeHtml(href)}" target="_blank" rel="noreferrer">${escapeHtml(asset.name)}</a><span>${escapeHtml(asset.type || "Asset")} · added by ${escapeHtml(asset.by || "Team")}</span></div>`;
-      }).join("");
-    }
-
-    function renderCommentList(comments = []) {
-      if (!comments.length) return '<div class="empty">No comments yet.</div>';
-      return comments.slice().reverse().map(comment => `
-        <div class="comment-item">
-          <p>${escapeHtml(comment.text)}</p>
-          <span>${escapeHtml(comment.by)} · ${escapeHtml(comment.date)}</span>
-          ${comment.assets?.length ? `<div class="asset-list">${renderAssetList(comment.assets)}</div>` : ""}
-        </div>
-      `).join("");
-    }
-
-    function updateActiveProject(mutator) {
-      const projects = getProjects();
-      const index = projects.findIndex(project => project.id === activeProjectId);
-      if (index < 0) return;
-      mutator(projects[index]);
-      saveProjects(projects);
-      renderProjects();
-    }
-
-    function saveActiveProjectDetails() {
-      updateActiveProject(project => {
-        project.name = qs("#projectName").value.trim() || project.name;
-        project.owner = qs("#projectOwner").value;
-        project.priority = qs("#projectPriority").value;
-        project.description = qs("#projectDescription").value.trim();
-        project.collaborators = qs("#projectCollaborators").value.trim();
-        project.viewers = qs("#projectViewers").value.trim();
-      });
-    }
-
-    function updateProjectStatus(status, addComment = false) {
-      updateActiveProject(project => {
-        project.status = status;
-        if (addComment) {
-          project.comments = project.comments || [];
-          project.comments.push({
-            by: currentUser(),
-            date: new Date().toLocaleString(),
-            text: `${currentUser()} marked this project as ${status}.`,
-            assets: []
-          });
-        }
-      });
-    }
-
-    function addProjectLink() {
-      const url = qs("#projectLink").value.trim();
-      if (!url) return;
-      updateActiveProject(project => {
-        project.assets = project.assets || [];
-        project.assets.push({ name: url, url, type: "Link", by: currentUser() });
-      });
-    }
-
-    function addProjectFiles(files, label, callback) {
-      const fileList = [...files];
-      if (!fileList.length) return;
-      Promise.all(fileList.map(file => new Promise(resolve => {
-        const reader = new FileReader();
-        reader.onload = () => resolve({ name: file.name, type: label || file.type || "File", size: file.size, dataUrl: reader.result, by: currentUser() });
-        reader.readAsDataURL(file);
-      }))).then(assets => {
-        if (callback) {
-          callback(assets);
-          return;
-        }
-        updateActiveProject(project => {
-          project.assets = project.assets || [];
-          project.assets.push(...assets);
-        });
-      });
-    }
-
-    function addProjectComment() {
-      const text = qs("#commentText").value.trim();
-      const files = qs("#commentFiles").files;
-      if (!text && !files.length) return;
-      addProjectFiles(files, "Comment attachment", assets => {
-        updateActiveProject(project => {
-          project.comments = project.comments || [];
-          project.comments.push({
-            by: currentUser(),
-            date: new Date().toLocaleString(),
-            text: text || "Uploaded files.",
-            assets
-          });
-        });
-      });
-      if (!files.length) {
-        updateActiveProject(project => {
-          project.comments = project.comments || [];
-          project.comments.push({ by: currentUser(), date: new Date().toLocaleString(), text, assets: [] });
-        });
-      }
-    }
-
-    function addProject() {
-      const projects = getProjects();
-      const id = `p${Date.now()}`;
-      projects.unshift({
-        id,
-        name: "New Project",
-        owner: currentUser(),
-        status: "Planning",
-        priority: "Medium",
-        description: "Add project details here.",
-        collaborators: "",
-        viewers: "",
-        assets: [],
-        comments: []
-      });
-      activeProjectId = id;
-      saveProjects(projects);
-      renderProjects();
-    }
-
-    function resetProjects() {
-      localStorage.setItem(projectKey(), JSON.stringify(defaultProjects));
-      activeProjectId = "p1";
-      renderProjects();
-    }
-
-    function renderChecklistTabs() {
-      const tabs = qs("#checkTabs");
-      tabs.innerHTML = "";
-      Object.entries(checklistData).forEach(([id, data]) => {
-        const btn = document.createElement("button");
-        btn.type = "button";
-        btn.className = "tab" + (id === activeChecklist ? " active" : "");
-        btn.textContent = data.title;
-        btn.setAttribute("role", "tab");
-        btn.setAttribute("aria-selected", String(id === activeChecklist));
-        btn.addEventListener("click", () => {
-          activeChecklist = id;
-          renderChecklistTabs();
-          renderChecklist();
-        });
-        tabs.append(btn);
-      });
-    }
-
-    function checklistKey(id = activeChecklist) {
-      return `mmhub-checklist-${id}`;
-    }
-
-    function getDone(id = activeChecklist) {
-      try { return JSON.parse(localStorage.getItem(checklistKey(id))) || []; }
-      catch { return []; }
-    }
-
-    function setDone(done, id = activeChecklist) {
-      localStorage.setItem(checklistKey(id), JSON.stringify(done));
-    }
-
-    function renderChecklist() {
-      const data = checklistData[activeChecklist];
-      const done = getDone();
-      const complete = done.length;
-      const total = data.items.length;
-      const pct = Math.round(complete / total * 100);
-      qs("#checkMeta").textContent = `${complete} of ${total} complete`;
-      qs("#checkProgress").style.width = `${pct}%`;
-      qs("#checkList").innerHTML = "";
-
-      data.items.forEach((text, index) => {
-        const item = document.createElement("button");
-        item.type = "button";
-        item.className = "check-item" + (done.includes(index) ? " done" : "");
-        item.innerHTML = `<span class="box" aria-hidden="true"></span><span class="check-text">${text}</span>`;
-        item.addEventListener("click", () => {
-          const next = new Set(getDone());
-          next.has(index) ? next.delete(index) : next.add(index);
-          setDone([...next].sort((a, b) => a - b));
-          renderChecklist();
-          updateMetrics();
-        });
-        qs("#checkList").append(item);
-      });
-      updateMetrics();
-    }
-
-    function resetActiveChecklist() {
-      localStorage.removeItem(checklistKey());
-      renderChecklist();
-      updateMetrics();
-    }
-
-    function renderSuggestions() {
-      const row = qs("#suggestions");
-      answers.forEach(answer => {
-        const btn = document.createElement("button");
-        btn.type = "button";
-        btn.className = "chip";
-        btn.textContent = answer.label;
-        btn.addEventListener("click", () => sendChat(answer.label));
-        row.append(btn);
-      });
-    }
-
-    function addMessage(text, role) {
-      const msg = document.createElement("div");
-      msg.className = `msg ${role}`;
-      const avatar = document.createElement("div");
-      avatar.className = "msg-avatar";
-      avatar.textContent = role === "bot" ? "MM" : "You";
-      const bubble = document.createElement("div");
-      bubble.className = "bubble";
-      bubble.textContent = text;
-      msg.append(avatar, bubble);
-      qs("#messages").append(msg);
-      qs("#messages").scrollTop = qs("#messages").scrollHeight;
-    }
-
-    function findAnswer(text) {
-      const lower = text.toLowerCase();
-      const match = answers.find(answer => answer.trigger.some(trigger => lower.includes(trigger)));
-      return match ? match.text : "That is a good one to add to the Mortgage Marketplace answer bank. For a deeper answer right now, open the My Mortgage Assistant GPT above, then save the approved wording here for the team.";
-    }
-
-    function sendChat(text) {
-      const clean = text.trim();
-      if (!clean) return;
-      addMessage(clean, "user");
-      qs("#chatInput").value = "";
-      setTimeout(() => addMessage(findAnswer(clean), "bot"), 260);
-    }
-
-    function updateMetrics() {
-      qs("#flyerCount").textContent = resources.filter(item => item.category === "Flyers").length;
-      qs("#formCount").textContent = resources.filter(item => item.category === "Forms").length;
-      qs("#trainingCount").textContent = resources.filter(item => item.category === "Training").length;
-      qs("#projectCount").textContent = getProjects().length;
-    }
-
-    init();
+    function renderAssets(a=[]){return a.length?a.map(x=>`<div class="asset-item"><a href="${esc(x.url||x.dataUrl||"#")}" target="_blank">${esc(x.name)}</a><span>${esc(x.type||"Asset")} · added by ${esc(x.by||"Team")}</span></div>`).join(""):'<div class="empty">No assets yet.</div>'}
+    function renderComments(c=[]){return c.length?c.slice().reverse().map(x=>`<div class="comment-item"><p>${esc(x.text)}</p><span>${esc(x.by)} · ${esc(x.date)}</span>${x.assets?.length?`<div class="asset-list">${renderAssets(x.assets)}</div>`:""}</div>`).join(""):'<div class="empty">No comments yet.</div>'}
+    function mutateProject(fn){const p=getProjects(),i=p.findIndex(x=>x.id===activeProjectId); if(i<0)return; fn(p[i]); saveProjects(p); renderProjects();}
+    function saveProjectDetails(){if(!isAdmin())return; mutateProject(p=>{p.name=qs("#projectName").value.trim()||p.name;p.owner=qs("#projectOwner").value.trim()||p.owner;p.priority=qs("#projectPriority").value;p.description=qs("#projectDescription").value.trim();p.collaborators=qs("#projectCollaborators").value.trim();p.viewers=qs("#projectViewers").value.trim();});}
+    function updateProjectStatus(status,comment=false){mutateProject(p=>{p.status=status;if(comment){p.comments=p.comments||[];p.comments.push({by:appUser.name,date:new Date().toLocaleString(),text:`${appUser.name} marked this project as ${status}.`,assets:[]});}});}
+    function addProjectLink(){const url=qs("#projectLink").value.trim(); if(!url)return; mutateProject(p=>{p.assets=p.assets||[];p.assets.push({name:url,url,type:"Link",by:appUser.name});});}
+    function addProjectFiles(files,label,cb){const list=[...files]; if(!list.length)return; Promise.all(list.map(file=>new Promise(res=>{const r=new FileReader();r.onload=()=>res({name:file.name,type:label||file.type||"File",dataUrl:r.result,by:appUser.name});r.readAsDataURL(file);}))).then(assets=>{if(cb){cb(assets);return;} mutateProject(p=>{p.assets=p.assets||[];p.assets.push(...assets);});});}
+    function addProjectComment(){const text=qs("#commentText").value.trim(), files=qs("#commentFiles").files; if(!text&&!files.length)return; const post=assets=>mutateProject(p=>{p.comments=p.comments||[];p.comments.push({by:appUser.name,date:new Date().toLocaleString(),text:text||"Uploaded files.",assets});}); files.length?addProjectFiles(files,"Comment attachment",post):post([]);}
+    function addProject(){if(!isAdmin())return; const p=getProjects(),id=`p${Date.now()}`; p.unshift({id,name:"New Project",owner:appUser.name,status:"Planning",priority:"Medium",description:"Add project details here.",collaborators:"",viewers:"",assets:[],comments:[]}); activeProjectId=id; saveProjects(p); renderProjects();}
+    function resetProjects(){if(!isAdmin())return; saveProjects(defaultProjects); activeProjectId="p1"; renderProjects();}
+    function renderChecklistTabs(){const tabs=qs("#checkTabs");tabs.innerHTML="";Object.entries(checklistData).forEach(([id,d])=>{const b=document.createElement("button");b.className="tab"+(id===activeChecklist?" active":"");b.textContent=d.title;b.onclick=()=>{activeChecklist=id;renderChecklistTabs();renderChecklist();};tabs.append(b);});}
+    const checklistKey=(id=activeChecklist)=>`mmhub-checklist-${id}`;
+    function getDone(id=activeChecklist){try{return JSON.parse(localStorage.getItem(checklistKey(id)))||[]}catch{return[]}}
+    function setDone(done,id=activeChecklist){localStorage.setItem(checklistKey(id),JSON.stringify(done));}
+    function renderChecklist(){const d=checklistData[activeChecklist],done=getDone(),pct=Math.round(done.length/d.items.length*100);qs("#checkMeta").textContent=`${done.length} of ${d.items.length} complete`;qs("#checkProgress").style.width=`${pct}%`;qs("#checkList").innerHTML="";d.items.forEach((t,i)=>{const b=document.createElement("button");b.className="check-item"+(done.includes(i)?" done":"");b.innerHTML=`<span class="box"></span><span class="check-text">${esc(t)}</span>`;b.onclick=()=>{const n=new Set(getDone());n.has(i)?n.delete(i):n.add(i);setDone([...n].sort((a,b)=>a-b));renderChecklist();};qs("#checkList").append(b);});}
+    function resetActiveChecklist(){localStorage.removeItem(checklistKey());renderChecklist();}
+    function renderSuggestions(){const row=qs("#suggestions");answers.forEach(a=>{const b=document.createElement("button");b.className="chip";b.type="button";b.textContent=a.label;b.onclick=()=>sendChat(a.label);row.append(b);});}
+    function addMessage(text,role){const msg=document.createElement("div");msg.className=`msg ${role}`;const av=document.createElement("div");av.className="msg-avatar";av.textContent=role==="bot"?"MM":"You";const bu=document.createElement("div");bu.className="bubble";bu.textContent=text;msg.append(av,bu);qs("#messages").append(msg);qs("#messages").scrollTop=qs("#messages").scrollHeight;}
+    function findAnswer(text){const l=text.toLowerCase(),m=answers.find(a=>a.trigger.some(t=>l.includes(t)));return m?m.text:"That is a good one to add to the Mortgage Marketplace answer bank. Use the custom GPT link above for a deeper answer.";}
+    function sendChat(text){const clean=text.trim(); if(!clean)return; addMessage(clean,"user"); qs("#chatInput").value=""; setTimeout(()=>addMessage(findAnswer(clean),"bot"),220);}
+    function updateMetrics(){qs("#flyerCount").textContent=resources.filter(r=>r.category==="Flyers").length;qs("#formCount").textContent=resources.filter(r=>r.category==="Forms").length;qs("#trainingCount").textContent=resources.filter(r=>r.category==="Training").length;qs("#projectCount").textContent=getProjects().length;qs("#pulseProjects").textContent=`${getProjects().length} active`;}
+    setupAuth();
   </script>
 </body>
 </html>
